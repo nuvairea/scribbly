@@ -620,6 +620,10 @@ html {
   transform: scale(0.9);
 }
 
+.fab.hidden {
+  display: none;
+}
+
 @keyframes fab-in {
   from {
     transform: scale(0);
