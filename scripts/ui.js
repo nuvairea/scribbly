@@ -44,6 +44,9 @@ export class UI {
         const prevBtn = document.getElementById('month-prev');
         const nextBtn = document.getElementById('month-next');
         const label = document.getElementById('current-month-display');
+        const fab = document.getElementById('fab-add-note');
+
+        fab?.classList.toggle('hidden', this.view === 'trash');
 
         header.classList.toggle('hidden', this.view === 'trash');
 
