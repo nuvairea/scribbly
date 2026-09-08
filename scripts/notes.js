@@ -162,6 +162,7 @@ export class NotesManager {
             const serverNotes = (result.data.notes || []).map((note) => this.normalizeNote(note));
             if (serverNotes.length > 0) {
                 this.notes = serverNotes;
+                await this.cleanupTrash();
                 this.serverHydrated = true;
                 this.save();
                 return;
@@ -209,10 +210,15 @@ export class NotesManager {
         localStorage.setItem('scribbly_migration_done', 'true');
     }
 
-    cleanupTrash() {
+    async cleanupTrash() {
         const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
         const now = Date.now();
         const initialLength = this.notes.length;
+        const expiredNotes = this.notes.filter((note) => (
+            note.deleted
+            && note.deletedAt
+            && (now - note.deletedAt) >= sevenDaysInMs
+        ));
 
         this.notes = this.notes.filter((note) => {
             if (!note.deleted) return true;
@@ -222,6 +228,15 @@ export class NotesManager {
 
         if (this.notes.length !== initialLength) {
             this.save();
+        }
+
+        if (this.isAuthenticated && expiredNotes.length > 0) {
+            await Promise.all(expiredNotes.map(async (note) => {
+                const result = await request(`/notes/${note.id}`, { method: 'DELETE' });
+                if (!result.ok && result.status !== 404) {
+                    console.error(`Failed to permanently delete note ${note.id}`, result.data?.error);
+                }
+            }));
         }
     }
 
@@ -453,6 +468,9 @@ export class NotesManager {
         const active = this.notes.filter((note) => !note.deleted);
         if (active.length === 0) return null;
 
+        const now = new Date();
+        const currentKey = now.getFullYear() * 12 + now.getMonth();
+
         let earliest = null;
         let latest = null;
 
@@ -468,6 +486,14 @@ export class NotesManager {
                 latest = { key, month: date.getMonth(), year: date.getFullYear() };
             }
         });
+
+        if (currentKey > latest.key) {
+            latest = {
+                key: currentKey,
+                month: now.getMonth(),
+                year: now.getFullYear()
+            };
+        }
 
         return { earliest, latest };
     }
