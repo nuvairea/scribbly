@@ -57,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const THEME_KEY = 'scribbly_theme'; // 'system' | 'light' | 'dark'
 
     const applyTheme = (theme) => {
+        document.documentElement.classList.add('theme-changing');
+
         if (theme === 'system') {
             document.documentElement.removeAttribute('data-theme');
         } else {
@@ -65,6 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
         syncThemeColor();
         themeToggle.querySelectorAll('.theme-option').forEach(opt => {
             opt.classList.toggle('active', opt.dataset.themeOption === theme);
+        });
+
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove('theme-changing');
         });
     };
 
