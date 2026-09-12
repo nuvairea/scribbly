@@ -285,6 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const togglePasswordBtn = document.getElementById('toggle-auth-password');
     const settingsModal = document.getElementById('settings-modal');
     const closeSettingsModalBtn = document.getElementById('close-settings-modal');
+    const settingsAuthedSection = document.querySelector('.settings-account-authed');
+    const settingsGuestSection = document.querySelector('.settings-account-guest');
 
     const GUEST_KEY = 'scribbly_guest_dismissed';
     const ACCOUNT_LABEL_KEY = 'scribbly_account_label';
@@ -340,9 +342,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const openSettingsModal = () => {
         toggleSidebar(false);
+        settingsAuthedSection.classList.toggle('settings-hidden', !manager.isAuthenticated);
+        settingsGuestSection.classList.toggle('settings-hidden', manager.isAuthenticated);
         settingsModal.classList.add('active');
     };
     const closeSettingsModal = () => settingsModal.classList.remove('active');
+
+    document.getElementById('btn-settings-login').addEventListener('click', () => {
+        closeSettingsModal();
+        openAuthModal();
+    });
 
     const setAuthMode = (mode) => {
         authMode = mode;
@@ -380,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('close-auth-modal').addEventListener('click', closeAuthModal);
-    
+
     document.getElementById('nav-settings').addEventListener('click', (e) => {
         e.preventDefault();
         openSettingsModal();
