@@ -38,6 +38,36 @@
   }
 }
 
+html[data-theme="light"] {
+  --bg-body: #f0f2f5;
+  --bg-container: #fafbfc;
+  --bg-sidebar: #ffffff;
+  --bg-search: #f4f5f8;
+  --bg-modal: #ffffff;
+  --text-primary: #111111;
+  --text-secondary: #a0a4ab;
+  --border-color: #eeeeee;
+  --card-action-bg: #111111;
+  --card-action-color: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.05);
+  --overlay: rgba(0, 0, 0, 0.23);
+}
+
+html[data-theme="dark"] {
+  --bg-body: #121212;
+  --bg-container: #000000;
+  --bg-sidebar: #181818;
+  --bg-search: #1e1e1e;
+  --bg-modal: #242424;
+  --text-primary: #f0f2f5;
+  --text-secondary: #8a8e95;
+  --border-color: #2c2c2c;
+  --card-action-bg: #f1f1f1;
+  --card-action-color: #111111;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
 @font-face {
   font-family: 'Manrope';
   src: url('./assets/fonts/Manrope-VariableFont_wght.ttf');
@@ -63,6 +93,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   color: var(--text-primary);
+  transition: background-color .25s, color .25s;
 }
 
 html {
@@ -81,6 +112,7 @@ html {
   box-shadow: 0 10px 40px var(--shadow);
   overflow: hidden;
   position: relative;
+  transition: background-color .25s, box-shadow .25s;
 }
 
 .sidebar {
@@ -89,7 +121,7 @@ html {
   padding: 60px 30px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background-color .25s, color .25s, border-color .25s;
 }
 
 .brand {
@@ -100,6 +132,7 @@ html {
   font-weight: 700;
   margin-bottom: 50px;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .add-section {
@@ -116,6 +149,7 @@ html {
   font-weight: 700;
   cursor: pointer;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .nav-menu {
@@ -132,7 +166,7 @@ html {
   color: var(--text-secondary);
   font-size: 14px;
   font-weight: 600;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background-color .25s, border-color .25s;
 }
 
 .nav-menu a.active {
@@ -142,6 +176,7 @@ html {
 .settings {
   padding-top: 20px;
   border-top: 1px solid var(--border-color);
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 #settings-modal .settings-modal-content {
@@ -156,7 +191,7 @@ html {
   background: var(--bg-modal);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
   transform: scale(0.96);
-  transition: transform 0.3s cubic-bezier(.16, 1, .3, 1), opacity 0.25s ease;
+  transition: transform 0.3s cubic-bezier(.16, 1, .3, 1), opacity 0.25s ease, background-color .25s, color .25s, border-color .25s;
 }
 
 #settings-modal.active .settings-modal-content {
@@ -169,12 +204,14 @@ html {
   justify-content: space-between;
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .settings-title {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .settings-body {
@@ -191,6 +228,7 @@ html {
   font-size: 13px;
   color: var(--text-secondary);
   margin-bottom: 12px;
+  transition: color .25s;
 }
 
 .settings-section {
@@ -213,12 +251,14 @@ html {
   font-size: 14px;
   color: var(--text-primary);
   font-weight: 600;
+  transition: color .25s;
 }
 
 .settings-row-desc {
   font-size: 12px;
   color: var(--text-secondary);
   margin-top: 2px;
+  transition: color .25s;
 }
 
 .settings-btn {
@@ -231,9 +271,10 @@ html {
   background: transparent;
   border: 1px solid var(--border-color);
   padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   white-space: nowrap;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .settings-btn-danger {
@@ -244,17 +285,19 @@ html {
 .theme-toggle {
   display: flex;
   background: var(--bg-search);
-  border-radius: 8px;
+  border-radius: 50px;
   padding: 3px;
   gap: 2px;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .theme-option {
   font-size: 13px;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border-radius: 50px;
   color: var(--text-secondary);
   cursor: pointer;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .theme-option.active {
@@ -276,6 +319,7 @@ html {
   margin-left: auto;
   color: var(--text-secondary);
   transition: transform 0.2s ease;
+  transition: transform 0.2s ease, color .25s;
   flex-shrink: 0;
 }
 
@@ -319,7 +363,7 @@ html {
   font-weight: 600;
   cursor: pointer;
   text-align: left;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, background-color .25s, border-color .25s;
 }
 
 .dropdown-item:hover {
@@ -331,6 +375,7 @@ html {
   padding: 30px;
   overflow-y: auto;
   scrollbar-width: none;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .main-content::-webkit-scrollbar,
@@ -357,6 +402,7 @@ html {
   font-weight: 600;
   letter-spacing: 1px;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .hamburger-btn {
@@ -374,8 +420,9 @@ html {
   gap: 10px;
   background: var(--bg-search);
   padding: 15px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   width: 450px;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .search-box input {
@@ -385,10 +432,12 @@ html {
   width: 100%;
   font-size: 14px;
   color: var(--text-primary);
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .search-box iconify-icon {
   color: var(--text-secondary);
+  transition: color .25s;
 }
 
 .notes-section h2 {
@@ -396,6 +445,7 @@ html {
   font-weight: 700;
   margin-bottom: 15px;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .notes-header-bar {
@@ -405,6 +455,7 @@ html {
   margin-bottom: 30px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 15px;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .tabs {
@@ -423,6 +474,7 @@ html {
   font-weight: 600;
   cursor: pointer;
   position: relative;
+  transition: color .25s, background-color .25s, border-color .25s;
 }
 
 .tab.active {
@@ -447,6 +499,7 @@ html {
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 600;
+  transition: color .25s;
 }
 
 .date-nav #month-prev,
@@ -454,7 +507,7 @@ html {
   cursor: pointer;
   border-radius: 6px;
   padding: 2px;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color .25s;
 }
 
 .date-nav #month-prev:hover,
@@ -545,6 +598,7 @@ html {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color .25s, border-color .25s;
 }
 
 .note-body {
@@ -584,6 +638,7 @@ html {
   cursor: pointer;
   border: none;
   z-index: 2;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 @keyframes pulse {
@@ -613,6 +668,7 @@ html {
   background: transparent;
   font-size: 14px;
   font-weight: 600;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .new-note-card iconify-icon {
@@ -621,6 +677,7 @@ html {
   padding: 15px;
   border-radius: 12px;
   box-shadow: 0 4px 10px var(--shadow);
+  transition: background-color .25s, color .25s, border-color .25s, box-shadow .25s;
 }
 
 .empty-state {
@@ -630,6 +687,7 @@ html {
   color: var(--text-secondary);
   font-size: 15px;
   font-weight: 600;
+  transition: color .25s;
 }
 
 .trash-empty-state {
@@ -643,6 +701,7 @@ html {
 .trash-empty-state>iconify-icon {
   font-size: 42px;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .trash-empty-state h2,
@@ -653,6 +712,7 @@ html {
 .trash-empty-state h2 {
   color: var(--text-primary);
   font-size: 22px;
+  transition: color .25s;
 }
 
 .trash-empty-state p {
@@ -660,6 +720,7 @@ html {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.6;
+  transition: color .25s;
 }
 
 .trash-empty-action {
@@ -672,7 +733,7 @@ html {
   font: inherit;
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background-color 0.2s ease, color .25s, border-color .25s;
 }
 
 .trash-empty-action:hover {
@@ -696,6 +757,7 @@ html {
 .search-empty-state>iconify-icon {
   font-size: 42px;
   color: var(--text-primary);
+  transition: color .25s;
 }
 
 .notes-empty-state h2,
@@ -709,6 +771,7 @@ html {
 .search-empty-state h2 {
   color: var(--text-primary);
   font-size: 22px;
+  transition: color .25s;
 }
 
 .notes-empty-state p,
@@ -717,6 +780,7 @@ html {
   font-size: 14px;
   font-weight: 400;
   line-height: 1.6;
+  transition: color .25s;
 }
 
 .fab {
@@ -735,7 +799,7 @@ html {
   cursor: pointer;
   box-shadow: 0 8px 20px var(--shadow);
   z-index: 60;
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color .25s, color .25s, border-color .25s;
   animation: fab-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -772,7 +836,7 @@ html {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.22s ease, visibility 0.22s ease;
+  transition: opacity 0.22s ease, visibility 0.22s ease, background-color .25s, color .25s, border-color .25s;
   will-change: opacity, visibility;
   transform: translateZ(0);
   contain: strict;
@@ -796,7 +860,7 @@ html {
   position: relative;
   transform: scale(0.96) translateY(100%);
   opacity: 0;
-  transition: transform .35s cubic-bezier(.16, 1, .3, 1), opacity .3s ease;
+  transition: transform .35s cubic-bezier(.16, 1, .3, 1), opacity .3s ease, background-color .25s, color .25s, border-color .25s;
   will-change: transform, opacity;
 }
 
@@ -812,6 +876,7 @@ html {
   cursor: pointer;
   font-size: 20px;
   color: var(--text-secondary);
+  transition: color .25s;
 }
 
 .modal-content input {
@@ -823,6 +888,7 @@ html {
   outline: none;
   background: transparent;
   color: var(--text-primary);
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .modal-content textarea {
@@ -837,6 +903,7 @@ html {
   background: transparent;
   color: var(--text-primary);
   scrollbar-width: none;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .color-palette {
@@ -851,7 +918,7 @@ html {
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
-  transition: border-radius 0.2s ease, border-color 0.2s ease;
+  transition: border-radius 0.2s ease, background-color .25s, color .25s, border-color 0.2s ease;
 }
 
 .dot.selected {
@@ -864,12 +931,13 @@ html {
   color: var(--bg-container);
   border: none;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 #save-note-btn:disabled {
@@ -887,6 +955,7 @@ html {
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 15px;
   position: relative;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .auth-tab {
@@ -898,6 +967,7 @@ html {
   padding-bottom: 15px;
   margin-bottom: -16px;
   border-bottom: 2px solid transparent;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .auth-tab.active {
@@ -921,6 +991,7 @@ html {
   background: transparent;
   color: var(--text-primary);
   width: 100%;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 .password-field {
@@ -938,6 +1009,7 @@ html {
   color: var(--text-secondary);
   cursor: pointer;
   user-select: none;
+  transition: color .25s;
 }
 
 .auth-error {
@@ -952,13 +1024,14 @@ html {
   color: var(--bg-container);
   border: none;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
   font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color .25s, color .25s, border-color .25s;
 }
 
 #auth-submit-btn:disabled {
@@ -1050,6 +1123,7 @@ html {
   font-size: 13px;
   color: var(--text-secondary);
   margin: 0;
+  transition: color .25s;
 }
 
 .auth-switch-text a,
@@ -1057,6 +1131,7 @@ html {
   color: var(--text-primary);
   font-weight: 700;
   text-decoration: none;
+  transition: color .25s;
 }
 
 .auth-guest-text {
@@ -1075,7 +1150,7 @@ html {
   border-radius: 12px;
   font-size: 0.85rem;
   pointer-events: none;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background-color .25s, color .25s, border-color .25s;
   z-index: 999;
 }
 
@@ -1128,7 +1203,7 @@ html {
     z-index: 150;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: opacity 0.5s ease, visibility 0.5s ease, background-color .25s, color .25s, border-color .25s;
     will-change: opacity, visibility;
     transform: translateZ(0);
     contain: strict;
@@ -1219,6 +1294,11 @@ html {
 
   .date-nav {
     gap: 5px;
+  }
+
+  .settings-body {
+    padding: 20px;
+    margin: 0;
   }
 
   .modal-content {
