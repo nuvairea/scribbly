@@ -41,6 +41,7 @@ Scribbly is a focused note-taking app with fast local editing, searchable notes,
 - Continue working offline with automatic retry when a save fails
 - Install the app as a PWA for offline app-shell access
 - Switch between light and dark themes, or follow the system preference
+- Manage your account and data from a dedicated Settings page: export notes as JSON, permanently clear trash, or delete your account
 
 ## Built with
 
@@ -87,6 +88,4 @@ scribbly/
 
 ## Backend
 
-The API is maintained in a separate Node.js and Express service. It uses session-based authentication with bcrypt and `express-session`, and MongoDB for persistence.
-
-See the [Scribbly Server repository](https://github.com/nuvairea/scribbly-server)
+The API is maintained in a separate Node.js and Express service. See the [Scribbly Server repository](https://github.com/nuvairea/scribbly-server)
