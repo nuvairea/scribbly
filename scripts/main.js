@@ -55,6 +55,34 @@ document.addEventListener('DOMContentLoaded', () => {
     syncThemeColor();
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor);
 
+    const THEME_KEY = 'scribbly_theme'; // 'system' | 'light' | 'dark'
+
+    const applyTheme = (theme) => {
+        if (theme === 'system') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        syncThemeColor();
+        themeToggle.querySelectorAll('.theme-option').forEach(opt => {
+            opt.classList.toggle('active', opt.dataset.themeOption === theme);
+        });
+    };
+
+    const setTheme = (theme) => {
+        localStorage.setItem(THEME_KEY, theme);
+        applyTheme(theme);
+    };
+
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', (e) => {
+        const option = e.target.closest('.theme-option');
+        if (!option) return;
+        setTheme(option.dataset.themeOption);
+    });
+
+    applyTheme(localStorage.getItem(THEME_KEY) || 'system');
+
     const toggleSidebar = (show) => {
         if (show) {
             sidebar.classList.add('open');
@@ -115,6 +143,48 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.classList.add('selected');
             ui.color = e.target.dataset.color;
         });
+    });
+
+    const btnClearTrash = document.getElementById('btn-clear-trash');
+
+    btnClearTrash.addEventListener('click', async () => {
+        const trashedCount = manager.notes.filter((note) => note.deleted).length;
+
+        if (trashedCount === 0) {
+            ui.showToast('Trash is already empty');
+            return;
+        }
+
+        const confirmed = confirm(`Permanently delete ${trashedCount} note${trashedCount === 1 ? '' : 's'}? This can't be undone.`);
+        if (!confirmed) return;
+
+        await manager.emptyTrash();
+        ui.render();
+        ui.showToast('Trash emptied');
+    });
+
+    const btnExportNotes = document.getElementById('btn-export-notes');
+
+    btnExportNotes.addEventListener('click', () => {
+        const exportNotes = manager.notes
+            .filter((note) => !note.deleted)
+            .map(({ id, title, body, color, timestamp }) => ({ id, title, body, color, timestamp }));
+
+        if (exportNotes.length === 0) {
+            ui.showToast('No notes to export');
+            return;
+        }
+
+        const blob = new Blob([JSON.stringify(exportNotes, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `scribbly-export-${new Date().toISOString().slice(0, 10)}.json`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+        ui.showToast('Notes exported');
     });
 
     const saveNoteBtn = document.getElementById('save-note-btn');
