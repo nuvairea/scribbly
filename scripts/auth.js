@@ -29,3 +29,7 @@ export function checkSession() {
 export function logout() {
   return request('/logout', { method: 'POST' });
 }
+
+export function deleteAccount() {
+  return request('/me', { method: 'DELETE' });
+}
