@@ -1,6 +1,6 @@
 import { NotesManager } from './notes.js';
 import { UI } from './ui.js';
-import { signup, login, checkSession, logout } from './auth.js';
+import { signup, login, checkSession, logout, deleteAccount } from './auth.js';
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const syncThemeColor = () => {
         themeColorMeta.setAttribute('content', getComputedStyle(document.body).backgroundColor);
     };
-    syncThemeColor();
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncThemeColor);
 
     const THEME_KEY = 'scribbly_theme'; // 'system' | 'light' | 'dark'
@@ -81,7 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme(option.dataset.themeOption);
     });
 
-    applyTheme(localStorage.getItem(THEME_KEY) || 'system');
+    const initialTheme = localStorage.getItem(THEME_KEY) || 'system';
+    applyTheme(initialTheme);
 
     const toggleSidebar = (show) => {
         if (show) {
@@ -337,6 +337,44 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', debounce((e) => {
         ui.render(e.target.value, { animate: false });
     }, 150));
+
+    const deleteAccBtn = document.getElementById('btn-delete-account');
+
+    deleteAccBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const confirmed = confirm("Permanently delete your account and all synced notes? This can't be undone.");
+        if (!confirmed) return;
+
+        setButtonLoading(deleteAccBtn, true);
+        const previousUserId = manager.userId;
+        const result = await deleteAccount();
+        setButtonLoading(deleteAccBtn, false);
+
+        if (!result.ok) {
+            ui.showToast(result.data?.error || 'Failed to delete account');
+            return;
+        }
+
+        localStorage.removeItem(LAST_SESSION_KEY);
+        localStorage.removeItem(ACCOUNT_LABEL_KEY);
+        localStorage.removeItem(GUEST_KEY);
+
+        if (previousUserId) {
+            localStorage.removeItem(`scribbly_notes_cache_${previousUserId}`);
+        }
+
+        navAccountWrap.classList.remove('authed');
+        navAccountLabel.textContent = 'Log in';
+
+        await manager.setAuthContext(false);
+        manager.notes = [];
+        localStorage.removeItem('scribbly_data');
+        ui.render(searchInput.value);
+
+        closeSettingsModal();
+        ui.showToast('Account deleted');
+    });
 
     // --- Auth ---
     const authModal = document.getElementById('auth-modal');
