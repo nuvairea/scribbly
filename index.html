@@ -143,9 +143,72 @@
 
   <div class="modal" id="settings-modal">
     <div class="modal-content settings-modal-content">
-      <span class="close-btn" id="close-settings-modal">
-        <iconify-icon icon="fluent:dismiss-24-regular"></iconify-icon>
-      </span>
+      <div class="settings-header">
+        <span class="settings-title">Settings</span>
+        <span class="close-btn" id="close-settings-modal">
+          <iconify-icon icon="fluent:dismiss-24-regular"></iconify-icon>
+        </span>
+      </div>
+
+      <div class="settings-body">
+
+        <div class="settings-section">
+          <div class="settings-section-label">Appearance</div>
+          <div class="settings-row">
+            <span class="settings-row-label">Theme</span>
+            <div class="theme-toggle" id="theme-toggle">
+              <span class="theme-option" data-theme-option="system">System</span>
+              <span class="theme-option" data-theme-option="light">Light</span>
+              <span class="theme-option" data-theme-option="dark">Dark</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Data</div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Export notes</div>
+              <p class="settings-row-desc">Download all your notes as a JSON file</p>
+            </div>
+            <button type="button" id="btn-export-notes" class="settings-btn">
+              <iconify-icon icon="fluent:arrow-download-24-regular" width="16"></iconify-icon> Export
+            </button>
+          </div>
+
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Clear trash</div>
+              <p class="settings-row-desc">Permanently delete everything in Recently Deleted</p>
+            </div>
+            <button type="button" id="btn-clear-trash" class="settings-btn">
+              <iconify-icon icon="fluent:delete-24-regular" width="16"></iconify-icon> Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Account</div>
+
+          <div class="settings-row settings-account-authed">
+            <div>
+              <div class="settings-row-label">Delete account</div>
+              <p class="settings-row-desc">Permanently deletes your account and all synced notes</p>
+            </div>
+            <button type="button" id="btn-delete-account" class="settings-btn settings-btn-danger">Delete</button>
+          </div>
+
+          <div class="settings-row settings-account-guest">
+            <div>
+              <div class="settings-row-label">You're browsing as a guest</div>
+              <p class="settings-row-desc">Log in or sign up to sync notes and manage your account</p>
+            </div>
+            <button type="button" id="btn-settings-login" class="settings-btn">Log in</button>
+          </div>
+
+        </div>
+      </div>
     </div>
   </div>
 
