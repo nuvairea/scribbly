@@ -285,7 +285,7 @@ html {
 .theme-toggle {
   display: flex;
   background: var(--bg-search);
-  border-radius: 50px;
+  border-radius: 10px;
   padding: 3px;
   gap: 2px;
   transition: background-color .25s, color .25s, border-color .25s;
@@ -294,7 +294,7 @@ html {
 .theme-option {
   font-size: 13px;
   padding: 10px 12px;
-  border-radius: 50px;
+  border-radius: 10px;
   color: var(--text-secondary);
   cursor: pointer;
   transition: background-color .25s, color .25s, border-color .25s;
