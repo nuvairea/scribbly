@@ -240,6 +240,25 @@ export class NotesManager {
         }
     }
 
+    async emptyTrash() {
+        const trashedNotes = this.notes.filter((note) => note.deleted);
+        if (trashedNotes.length === 0) {
+            return;
+        }
+
+        this.notes = this.notes.filter((note) => !note.deleted);
+        this.save();
+
+        if (this.isAuthenticated) {
+            await Promise.all(trashedNotes.map(async (note) => {
+                const result = await request(`/notes/${note.id}`, { method: 'DELETE' });
+                if (!result.ok && result.status !== 404) {
+                    console.error(`Failed to permanently delete note ${note.id}`, result.data?.error);
+                }
+            }));
+        }
+    }
+
     async addNote(title, body, color) {
         const dateObj = new Date();
         const newNote = {
