@@ -470,7 +470,17 @@ export class NotesManager {
                 }
 
                 if (tab === 'week') {
-                    return diffDays <= 7;
+                    const target = viewedMonth || {
+                        month: now.getMonth(),
+                        year: now.getFullYear()
+                    };
+
+                    if (noteDate.getMonth() !== target.month || noteDate.getFullYear() !== target.year) {
+                        return false;
+                    }
+
+                    const isInViewedMonth = noteDate.getMonth() === target.month && noteDate.getFullYear() === target.year;
+                    return isInViewedMonth && diffDays <= 7;
                 }
 
                 if (tab === 'month') {
