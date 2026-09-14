@@ -78,10 +78,14 @@ scribbly/
 ├── sw.js
 ├── style.css
 ├── scripts/
-│   ├── main.js      # application entry point and event wiring
-│   ├── auth.js      # authentication API calls
-│   ├── notes.js     # note CRUD and sync logic
-│   └── ui.js        # rendering and UI updates
+│   ├── main.js          # application bootstrap and module 
+│   ├── app-utils.js     # shared event and button utilities
+│   ├── auth.js          # authentication API calls
+│   ├── auth-events.js   # authentication and account event 
+│   ├── note-events.js   # note, navigation, search, and tab 
+│   ├── notes.js         # note CRUD and sync logic
+│   ├── theme.js         # theme selection and 
+│   └── ui.js            # rendering, DOM updates, and toast 
 └── assets/
     └── screenshots/
 ```
