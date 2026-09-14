@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'scribbly-v19';
+const CACHE_VERSION = 'scribbly-v20';
 const ICONIFY_CACHE = 'iconify-cache';
 
 const APP_SHELL = [
@@ -10,6 +10,10 @@ const APP_SHELL = [
   './scripts/notes.js',
   './scripts/auth.js',
   './scripts/ui.js',
+  './scripts/auth-events.js',
+  './scripts/note-events.js',
+  './scripts/app-utils.js',
+  './scripts/theme.js',
   './assets/iconify-icon.min.js',
   './assets/fonts/DancingScript-VariableFont_wght.ttf',
   './assets/fonts/Manrope-VariableFont_wght.ttf',
