@@ -1,6 +1,6 @@
 import { debounce, setButtonLoading } from './app-utils.js';
 
-export function bindNoteEvents({ manager, ui, elements, openModal, toggleSidebar }) {
+export function bindNoteEvents({ manager, ui, elements, toggleSidebar }) {
   const {
     modal,
     searchInput,
