@@ -1153,8 +1153,10 @@ html {
   background: var(--bg-modal);
   color: var(--text-primary);
   box-shadow: 0 10px 25px var(--shadow);
-  padding: 12px 40px;
-  border-radius: 12px;
+  padding: 12px 24px;
+  white-space: nowrap;
+  max-width: calc(100vw - 32px);
+  border-radius: 10px;
   font-size: 0.85rem;
   pointer-events: none;
   transition: transform 0.3s ease, background-color .25s, color .25s, border-color .25s;
