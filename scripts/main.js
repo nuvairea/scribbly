@@ -14,6 +14,13 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+navigator.serviceWorker.addEventListener('controllerchange', () => {
+  if (sessionStorage.getItem('sw-reloading')) return;
+  sessionStorage.setItem('sw-reloading', 'true');
+  sessionStorage.setItem('sw-updated', 'true');
+  window.location.reload();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   const manager = new NotesManager();
   const ui = new UI(manager);
@@ -63,6 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
     closeAuthModal: document.getElementById('close-auth-modal'),
     deleteAccountBtn: document.getElementById('btn-delete-account'),
   };
+
+  if (sessionStorage.getItem('sw-updated')) {
+    sessionStorage.removeItem('sw-updated');
+    sessionStorage.removeItem('sw-reloading');
+    ui.showToast('App updated to the latest version', 6000);
+  }
 
   localStorage.setItem('scribbly_last_tab', localStorage.getItem('scribbly_last_tab') || 'today');
   ui.tab = localStorage.getItem('scribbly_last_tab');
