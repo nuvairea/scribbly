@@ -395,6 +395,7 @@ html {
   align-items: center;
   gap: 30px;
   margin-bottom: 30px;
+  position: relative;
 }
 
 .top-header-row {
@@ -429,6 +430,9 @@ html {
   padding: 15px 20px;
   border-radius: 10px;
   width: 450px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   transition: background-color .25s, color .25s, border-color .25s;
 }
 
@@ -1235,10 +1239,16 @@ html {
     margin-bottom: 30px;
   }
 
+  .search-box {
+    position: static;
+    transform: none;
+  }
+
   .top-header-row {
     width: 100%;
     justify-content: flex-start;
     gap: 15px;
+    margin-left: 0;
   }
 
   .search-box {
