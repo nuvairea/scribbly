@@ -1,0 +1,310 @@
+.modal {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, visibility 0.22s ease, background-color .25s, color .25s, border-color .25s;
+  will-change: opacity, visibility;
+  transform: translateZ(0);
+  contain: strict;
+}
+
+.modal.active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: var(--bg-modal);
+  color: var(--text-primary);
+  padding: 30px;
+  border-radius: 24px;
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  transform: scale(0.96) translateY(100%);
+  opacity: 0;
+  transition: transform .35s cubic-bezier(.16, 1, .3, 1), opacity .3s ease, background-color .25s, color .25s, border-color .25s;
+  will-change: transform, opacity;
+}
+
+.modal.active .modal-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text-secondary);
+  transition: color .25s;
+}
+
+.modal-content input {
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.modal-content textarea {
+  min-height: 150px;
+  max-height: 300px;
+  overflow-y: hidden;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  resize: none;
+  line-height: 1.5;
+  background: transparent;
+  color: var(--text-primary);
+  scrollbar-width: none;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.color-palette {
+  display: flex;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-radius 0.2s ease, background-color .25s, color .25s, border-color 0.2s ease;
+}
+
+.dot.selected {
+  border-color: var(--text-primary);
+  border-radius: 6px;
+}
+
+#save-note-btn {
+  background: var(--text-primary);
+  color: var(--bg-container);
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+#save-note-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.auth-modal-content {
+  width: 400px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 25px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 15px;
+  position: relative;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.auth-tab {
+  position: relative;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding-bottom: 15px;
+  margin-bottom: -16px;
+  border-bottom: 2px solid transparent;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.auth-tab.active {
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--text-primary);
+}
+
+#auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#auth-form input {
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  width: 100%;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  transition: color .25s;
+}
+
+.auth-error {
+  font-size: 13px;
+  color: #e74c3c;
+  min-height: 16px;
+  margin: 0;
+}
+
+#auth-submit-btn {
+  background: var(--text-primary);
+  color: var(--bg-container);
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+#auth-submit-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.btn-spinner {
+  position: relative;
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.btn-spinner span {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 2px;
+  height: 6px;
+  border-radius: 1px;
+  background-color: currentColor;
+  animation: btn-spinner-fade 0.9s linear infinite;
+}
+
+.btn-spinner span:nth-child(1) {
+  transform: rotate(0deg) translateY(-6.5px);
+  animation-delay: -0.9000s;
+}
+
+.btn-spinner span:nth-child(2) {
+  transform: rotate(45deg) translateY(-6.5px);
+  animation-delay: -0.7875s;
+}
+
+.btn-spinner span:nth-child(3) {
+  transform: rotate(90deg) translateY(-6.5px);
+  animation-delay: -0.6750s;
+}
+
+.btn-spinner span:nth-child(4) {
+  transform: rotate(135deg) translateY(-6.5px);
+  animation-delay: -0.5625s;
+}
+
+.btn-spinner span:nth-child(5) {
+  transform: rotate(180deg) translateY(-6.5px);
+  animation-delay: -0.4500s;
+}
+
+.btn-spinner span:nth-child(6) {
+  transform: rotate(225deg) translateY(-6.5px);
+  animation-delay: -0.3375s;
+}
+
+.btn-spinner span:nth-child(7) {
+  transform: rotate(270deg) translateY(-6.5px);
+  animation-delay: -0.2250s;
+}
+
+.btn-spinner span:nth-child(8) {
+  transform: rotate(315deg) translateY(-6.5px);
+  animation-delay: -0.1125s;
+}
+
+@keyframes btn-spinner-fade {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.auth-switch-text,
+.auth-guest-text {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  transition: color .25s;
+}
+
+.auth-switch-text a,
+.auth-guest-text a {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color .25s;
+}
+
+.auth-guest-text {
+  margin-top: -10px;
+}
+
+
+.modal-content textarea::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,73 @@
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.main-content::-webkit-scrollbar {
+  display: none;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.top-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.top-header h1 {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+  transition: color .25s;
+}
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-search);
+  padding: 15px 20px;
+  border-radius: 10px;
+  width: 450px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+.search-box iconify-icon {
+  color: var(--text-secondary);
+  transition: color .25s;
+}
+

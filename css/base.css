@@ -1,0 +1,111 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Manrope', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --bg-body: #f0f2f5;
+  --bg-container: #fafbfc;
+  --bg-sidebar: #ffffff;
+  --bg-search: #f4f5f8;
+  --bg-modal: #ffffff;
+  --text-primary: #111111;
+  --text-secondary: #a0a4ab;
+  --border-color: #eeeeee;
+  --card-action-bg: #111111;
+  --card-action-color: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.05);
+  --overlay: rgba(0, 0, 0, 0.23);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-body: #121212;
+    --bg-container: #000000;
+    --bg-sidebar: #181818;
+    --bg-search: #1e1e1e;
+    --bg-modal: #242424;
+    --text-primary: #f0f2f5;
+    --text-secondary: #8a8e95;
+    --border-color: #2c2c2c;
+    --card-action-bg: #f1f1f1;
+    --card-action-color: #111111;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --overlay: rgba(0, 0, 0, 0.6);
+  }
+}
+
+html[data-theme="light"] {
+  --bg-body: #f0f2f5;
+  --bg-container: #fafbfc;
+  --bg-sidebar: #ffffff;
+  --bg-search: #f4f5f8;
+  --bg-modal: #ffffff;
+  --text-primary: #111111;
+  --text-secondary: #a0a4ab;
+  --border-color: #eeeeee;
+  --card-action-bg: #111111;
+  --card-action-color: #ffffff;
+  --shadow: rgba(0, 0, 0, 0.05);
+  --overlay: rgba(0, 0, 0, 0.23);
+}
+
+html[data-theme="dark"] {
+  --bg-body: #121212;
+  --bg-container: #000000;
+  --bg-sidebar: #181818;
+  --bg-search: #1e1e1e;
+  --bg-modal: #242424;
+  --text-primary: #f0f2f5;
+  --text-secondary: #8a8e95;
+  --border-color: #2c2c2c;
+  --card-action-bg: #f1f1f1;
+  --card-action-color: #111111;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --overlay: rgba(0, 0, 0, 0.6);
+}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('../assets/fonts/Manrope-VariableFont_wght.ttf');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dancing Script';
+  src: url('../assets/fonts/DancingScript-VariableFont_wght.ttf');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background-color: var(--bg-body);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--text-primary);
+  transition: background-color .25s, color .25s;
+}
+
+html.theme-changing *,
+html.theme-changing *::before,
+html.theme-changing *::after {
+  transition: color .25s !important;
+  animation: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+  overflow-x: hidden;
+}
+
