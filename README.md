@@ -59,7 +59,7 @@ git clone https://github.com/nuvairea/scribbly.git
 cd scribbly
 ```
 
-Serve the directory with any static server:
+Serve the directory with any static server. Opening `index.html` directly is not recommended because ES modules and the service worker require an HTTP origin:
 
 ```bash
 npx live-server
@@ -67,7 +67,7 @@ npx live-server
 python3 -m http.server 5500
 ```
 
-Then open the local URL shown by the server. By default, the app connects to the deployed Scribbly API. To run the complete stack locally, use the backend project linked below.
+Then open the local URL shown by the server. The frontend connects to the deployed Scribbly API by default. To run the complete stack locally, use the backend project linked below.
 
 ## Project structure
 
@@ -76,18 +76,29 @@ scribbly/
 ├── index.html
 ├── manifest.json
 ├── sw.js
-├── style.css
-├── scripts/
-│   ├── main.js          # application bootstrap and module 
+├── css/
+│   ├── base.css         # variables, fonts, resets, and theme styles
+│   ├── header.css       # app header and search styles
+│   ├── modals.css       # note and authentication modals
+│   ├── notes.css        # note cards, tabs, and empty states
+│   ├── responsive.css   # mobile layout rules
+│   ├── settings.css     # settings modal and controls
+│   ├── sidebar.css      # navigation and account menu
+│   └── toast.css        # notification styles
+├── js/
+│   ├── main.js          # application bootstrap and module wiring
 │   ├── app-utils.js     # shared event and button utilities
 │   ├── auth.js          # authentication API calls
-│   ├── auth-events.js   # authentication and account event 
-│   ├── note-events.js   # note, navigation, search, and tab 
-│   ├── notes.js         # note CRUD and sync logic
-│   ├── theme.js         # theme selection and 
-│   └── ui.js            # rendering, DOM updates, and toast 
+│   ├── auth-events.js   # authentication and account event handlers
+│   ├── note-events.js   # note, navigation, search, and tab handlers
+│   ├── notes.js         # note CRUD, caching, and sync logic
+│   ├── theme.js         # theme selection and system preference handling
+│   └── ui.js            # rendering, DOM updates, and toast messages
 └── assets/
-    └── screenshots/
+  ├── favicons/
+  ├── fonts/
+  ├── iconify-icon.min.js
+  └── screenshots/
 ```
 
 ## Backend
