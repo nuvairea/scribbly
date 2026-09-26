@@ -1,8 +1,14 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { NotesManager } from '../lib/NotesManager';
 import type { Note } from '../types/note';
 
-interface NotesContextValue {
+export interface NotesContextValue {
   notes: Note[];
   addNote: NotesManager['addNote'];
   updateNote: NotesManager['updateNote'];
@@ -11,19 +17,20 @@ interface NotesContextValue {
   getNotes: NotesManager['getNotes'];
 }
 
-const NotesContext = createContext<NotesContextValue | null>(null);
+export const NotesContext = createContext<NotesContextValue | null>(null);
 
 export function NotesProvider({ children }: { children: ReactNode }) {
   const managerRef = useRef<NotesManager | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
 
   if (managerRef.current === null) {
-    managerRef.current = new NotesManager(() => {
-      setNotes([...managerRef.current!.notes]);
-    });
+    managerRef.current = new NotesManager();
   }
 
   useEffect(() => {
+    managerRef.current!.setOnChange(() => {
+      setNotes([...managerRef.current!.notes]);
+    });
     setNotes([...managerRef.current!.notes]);
   }, []);
 
@@ -36,13 +43,7 @@ export function NotesProvider({ children }: { children: ReactNode }) {
     getNotes: (...args) => managerRef.current!.getNotes(...args),
   };
 
-  return <NotesContext.Provider value={value}>{children}</NotesContext.Provider>;
-}
-
-export function useNotes(): NotesContextValue {
-  const context = useContext(NotesContext);
-
-  if (!context) throw new Error('useNotes must be used within a NotesProvider');
-
-  return context;
+  return (
+    <NotesContext.Provider value={value}>{children}</NotesContext.Provider>
+  );
 }
