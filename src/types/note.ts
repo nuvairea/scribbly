@@ -1,5 +1,4 @@
-export type PendingOp = 'create' | 'update' | 'delete' | undefined;
-
+export type PendingOp = 'create' | 'update' | 'delete';
 export interface Note {
   id: string;
   title: string;
@@ -10,6 +9,8 @@ export interface Note {
   timestamp: number;
   deleted: boolean;
   deletedAt: number | null;
-  pendingSync: PendingOp;
+  pendingSync: boolean;
+  pendingOp: PendingOp | null;
+  syncAttempts: number;
   syncError: boolean;
 }
