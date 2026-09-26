@@ -22,8 +22,7 @@ export class NotesManager {
     "Draft one of many...",
   ];
 
-  constructor(onChange?: () => void) {
-    this.onChange = onChange;
+  constructor() {
     this.localMigrationDone = Boolean(localStorage.getItem('scribbly_migration_done'));
 
     const lastSession = JSON.parse(localStorage.getItem('scribbly_last_session') || 'null');
@@ -466,5 +465,9 @@ export class NotesManager {
 
     this.localMigrationDone = true;
     localStorage.setItem('scribbly_migration_done', 'true');
+  }
+
+  public setOnChange(callback: () => void): void {
+    this.onChange = callback;
   }
 }
