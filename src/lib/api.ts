@@ -1,10 +1,12 @@
 export const API_BASE_URL = 'https://scribbly-server.onrender.com';
 
-export async function request<T>(path: string, options: RequestInit = {}): Promise<{
-  ok: boolean;
-  status: number;
-  data: T | { error: string };
-}> {
+type RequestSuccess<T> = { ok: true; status: number; data: T };
+type RequestFailure = { ok: false; status: number; data: { error: string } };
+
+export async function request<T = unknown>(
+  path: string,
+  options: RequestInit = {}
+): Promise<RequestSuccess<T> | RequestFailure> {
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
       ...options,
@@ -12,7 +14,11 @@ export async function request<T>(path: string, options: RequestInit = {}): Promi
       headers: { 'Content-Type': 'application/json', ...options.headers },
     });
     const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data };
+
+    if (res.ok) {
+      return { ok: true, status: res.status, data: data as T };
+    }
+    return { ok: false, status: res.status, data: { error: data?.error ?? 'Request failed' } };
   } catch (err) {
     return { ok: false, status: 0, data: { error: 'Network error — check your connection' } };
   }
