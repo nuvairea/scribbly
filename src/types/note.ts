@@ -1,4 +1,4 @@
-export type PendingOp = 'create' | 'update' | 'delete';
+export type PendingOp = 'create' | 'update' | 'trash';
 export interface Note {
   id: string;
   title: string;
