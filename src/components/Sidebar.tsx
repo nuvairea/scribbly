@@ -7,6 +7,8 @@ interface SidebarProps {
   onAddNote: () => void;
   onOpenSettings: () => void;
   userLabel: string;
+  notesCount: number;
+  trashCount: number;
 }
 
 export function Sidebar({
@@ -15,6 +17,8 @@ export function Sidebar({
   onAddNote,
   onOpenSettings,
   userLabel,
+  notesCount,
+  trashCount,
 }: SidebarProps) {
   const initial = userLabel.charAt(0).toUpperCase();
 
@@ -24,7 +28,7 @@ export function Sidebar({
 
       <button className={styles.addIcon} onClick={onAddNote}>
         <PlusCircle size={20} />
-        <span>New Note</span>
+        <span>New note</span>
       </button>
 
       <nav className={styles.nav}>
@@ -34,6 +38,7 @@ export function Sidebar({
         >
           <LayoutGrid size={18} />
           <span>All notes</span>
+          {notesCount > 0 && <span className={styles.badge}>{notesCount}</span>}
         </button>
         <button
           className={`${styles.navItem} ${view === 'trash' ? styles.navItemActive : ''}`}
@@ -41,6 +46,7 @@ export function Sidebar({
         >
           <Trash2 size={18} />
           <span>Trash</span>
+          {trashCount > 0 && <span className={styles.badge}>{trashCount}</span>}
         </button>
       </nav>
 

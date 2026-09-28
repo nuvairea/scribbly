@@ -9,7 +9,9 @@
 .brand {
   position: relative;
   display: inline-block;
-  font-size: 26px;
+  font-size: 32px;
+  font-family: 'Dancing Script', cursive;
+  margin: 0 8px;
   font-weight: 600;
   padding: 0 4px;
   margin-bottom: 35px;
@@ -53,41 +55,69 @@
   gap: 10px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
-  border: none;
   background: none;
   cursor: pointer;
+  position: relative;
   font-size: 14px;
   color: var(--color-text-secondary);
   text-align: left;
   font-family: var(--font-family-base);
   transition:
-    background-color 0.15s,
-    color 0.15s;
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &.navItemActive {
-    background-color: var(--color-bg-selected);
+    background: var(--color-bg-selected);
     color: var(--color-text-primary);
   }
+
+  &.navItemActive::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 16px;
+    border-radius: 6px;
+    background: var(--color-text-primary);
+  }
+}
+
+.badge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--color-bg-selected);
+  color: var(--color-text-secondary);
 }
 
 .spacer {
   flex: 1;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .profile {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 12px 16px;
   border: none;
   background: none;
   cursor: pointer;
-  border-top: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   padding-top: 16px;
   margin-top: 8px;
   text-align: left;
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
+  transition: background-color 0.25s;
+
+  &:hover {
+    background-color: var(--color-bg-selected);
+  }
 }
 
 .avatar {
