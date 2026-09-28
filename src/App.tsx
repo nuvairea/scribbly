@@ -1,12 +1,31 @@
-import { useNotes } from './context/NotesContext';
+import { useState } from 'react';
+import { Sidebar } from './components/Sidebar';
+import { TopHeader } from './components/TopHeader';
+import styles from './App.module.css';
 
 function App() {
-  const { notes } = useNotes();
+  const [view, setView] = useState<'notes' | 'trash'>('notes');
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <div>
-      <h1>Scribbly</h1>
-      <p>{notes.length} notes loaded</p>
+    <div className={styles.page}>
+      <div className={styles.appFrame}>
+        <Sidebar
+          view={view}
+          onViewChange={setView}
+          onAddNote={() => console.log('add note clicked')}
+          onOpenSettings={() => console.log('settings clicked')}
+          userLabel='Nuvairea'
+        />
+        <main className={styles.main}>
+          <TopHeader
+            title={view === 'notes' ? 'My Notes' : 'Trash'}
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+          <div className={styles.content}>Main content goes here</div>
+        </main>
+      </div>
     </div>
   );
 }
