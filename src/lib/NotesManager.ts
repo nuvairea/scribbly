@@ -1,7 +1,6 @@
 import type { Note, PendingOp } from '../types/note';
 import { request } from '../lib/api';
 import { filterNotes } from './NoteQueries';
-import type { MonthPosition } from './NoteQueries';
 
 export class NotesManager {
   notes: Note[] = [];
@@ -360,8 +359,8 @@ export class NotesManager {
     }
   }
 
-  getNotes(isDeleted: boolean, search?: string, tab?: string, viewedMonth: MonthPosition | null = null): Note[] {
-    return filterNotes(this.notes, isDeleted, search, tab, viewedMonth);
+  getNotes(isDeleted: boolean, search?: string, tab?: string): Note[] {
+    return filterNotes(this.notes, isDeleted, search, tab);
   }
 
   private async setAuthContext(isAuthenticated: boolean, userId: string | null = null): Promise<void> {
