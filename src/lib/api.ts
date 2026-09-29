@@ -19,7 +19,7 @@ export async function request<T = unknown>(
       return { ok: true, status: res.status, data: data as T };
     }
     return { ok: false, status: res.status, data: { error: data?.error ?? 'Request failed' } };
-  } catch (err) {
+  } catch {
     return { ok: false, status: 0, data: { error: 'Network error — check your connection' } };
   }
 }
