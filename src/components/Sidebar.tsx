@@ -1,4 +1,5 @@
 import { PlusCircle, LayoutGrid, Trash2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -26,10 +27,14 @@ export function Sidebar({
     <aside className={styles.sidebar}>
       <h1 className={styles.brand}>Scribbly</h1>
 
-      <button className={styles.addIcon} onClick={onAddNote}>
+      <motion.button
+        className={styles.addIcon}
+        onClick={onAddNote}
+        whileTap={{ scale: 0.96 }}
+      >
         <PlusCircle size={20} />
         <span>New note</span>
-      </button>
+      </motion.button>
 
       <nav className={styles.nav}>
         <button
@@ -39,6 +44,12 @@ export function Sidebar({
           <LayoutGrid size={18} />
           <span>All notes</span>
           {notesCount > 0 && <span className={styles.badge}>{notesCount}</span>}
+          {view === 'notes' && (
+            <motion.span
+              layoutId='nav-active-bar'
+              className={styles.activeBar}
+            />
+          )}
         </button>
         <button
           className={`${styles.navItem} ${view === 'trash' ? styles.navItemActive : ''}`}
@@ -47,6 +58,12 @@ export function Sidebar({
           <Trash2 size={18} />
           <span>Trash</span>
           {trashCount > 0 && <span className={styles.badge}>{trashCount}</span>}
+          {view === 'trash' && (
+            <motion.span
+              layoutId='nav-active-bar'
+              className={styles.activeBar}
+            />
+          )}
         </button>
       </nav>
 

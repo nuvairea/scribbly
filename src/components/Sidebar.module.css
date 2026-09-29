@@ -36,10 +36,6 @@
   transition:
     transform 0.3s,
     background-color 0.3s;
-
-  &:active {
-    transform: scale(0.96);
-  }
 }
 
 .nav {
@@ -70,18 +66,18 @@
     background: var(--color-bg-selected);
     color: var(--color-text-primary);
   }
+}
 
-  &.navItemActive::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 16px;
-    border-radius: 6px;
-    background: var(--color-text-primary);
-  }
+.activeBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  width: 3px;
+  height: 16px;
+  border-radius: 0 2px 2px 0;
+  background: var(--color-note-blue);
 }
 
 .badge {
