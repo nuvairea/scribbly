@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { TopHeader } from './components/TopHeader';
 import { Tabs } from './components/Tabs';
+import { NotesGrid } from './components/NotesGrid';
 import styles from './App.module.css';
 import { useNotes } from './hooks/useNotes';
 
@@ -34,9 +35,17 @@ function App() {
           />
           <div className={styles.content}>
             {view === 'notes' && (
-              <Tabs tab={selectedTab} onTabChange={setSelectedTab} />
+              <>
+                <Tabs tab={selectedTab} onTabChange={setSelectedTab} />
+                <NotesGrid
+                  search={searchQuery}
+                  tab={selectedTab}
+                  onAddNote={() => console.log('add note clicked')}
+                />
+              </>
             )}
-            Main content goes here
+
+            {view === 'trash' && <div className={styles.notesList} />}
           </div>
         </main>
       </div>
