@@ -55,20 +55,23 @@ button {
   --color-text-primary: #111111;
   --color-text-secondary: #a0a4ab;
 
+  --color-avatar-bg: #fff0d3;
+  --color-avatar-text: #9d6b2b;
+
   --color-card-action-bg: #111111;
   --color-card-action-color: #ffffff;
 
   --color-shadow: rgba(0, 0, 0, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.23);
 
-  --color-note-blue: #a3c9e6;
-  --color-note-coral: #f6aea8;
-  --color-note-yellow: #ece59f;
-  --color-note-mint: #c4ffef;
-  --color-note-lavender: #d9c3e9;
+  --color-note-blue: #6cb5de;
+  --color-note-coral: #eea9ab;
+  --color-note-yellow: #e9e381;
+  --color-note-mint: #85f09c;
+  --color-note-lavender: #c9a9e0;
 
   --font-family-base: 'Manrope', sans-serif;
-  --radius-sm: 8px;
+  --radius-sm: 10px;
   --radius-md: 24px;
   --radius-lg: 50px;
 
@@ -88,6 +91,9 @@ button {
 
     --color-text-primary: #f0f2f5;
     --color-text-secondary: #8a8e95;
+
+    --color-avatar-bg: #362c20;
+    --color-avatar-text: #fcd27c;
 
     --color-card-action-bg: #f1f1f1;
     --color-card-action-color: #111111;
