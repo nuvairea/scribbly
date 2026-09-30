@@ -87,7 +87,7 @@ export class NotesManager {
     this.addNote(
       'This note self-destructs...',
       "...it doesn't.\nbut it'd be really cool if it did.\nwelcome to Scribbly!",
-      '#eada76'
+      '#e9e381'
     );
   }
 
