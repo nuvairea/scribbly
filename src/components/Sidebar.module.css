@@ -65,6 +65,7 @@
   &.navItemActive {
     background: var(--color-bg-selected);
     color: var(--color-text-primary);
+    font-weight: 500;
   }
 }
 
@@ -77,7 +78,7 @@
   width: 3px;
   height: 16px;
   border-radius: 0 2px 2px 0;
-  background: var(--color-note-blue);
+  background: var(--color-text-primary);
 }
 
 .badge {
@@ -120,13 +121,13 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--color-note-blue);
+  background: var(--color-avatar-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 13px;
-  color: #111111;
+  color: var(--color-avatar-text);
   flex-shrink: 0;
 }
 
