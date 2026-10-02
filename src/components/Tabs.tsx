@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion';
+import { DateNav } from './DateNav';
+import type { MonthPosition } from '../lib/NoteQueries';
 import styles from './Tabs.module.css';
-
 interface TabsProps {
   tab: string;
   onTabChange: (tab: string) => void;
+  month: MonthPosition;
+  onMonthChange: (month: MonthPosition) => void;
+  monthBounds: { earliest: MonthPosition; latest: MonthPosition } | null;
 }
 
 const tabs = [
@@ -13,12 +17,13 @@ const tabs = [
   { id: 'month', label: 'This month' },
 ];
 
-const monthLabel = new Date().toLocaleDateString('en-US', {
-  month: 'long',
-  year: 'numeric',
-});
-
-export function Tabs({ tab, onTabChange }: TabsProps) {
+export function Tabs({
+  tab,
+  onTabChange,
+  month,
+  onMonthChange,
+  monthBounds,
+}: TabsProps) {
   return (
     <div className={styles.tabsRow}>
       <div className={styles.tabs}>
@@ -40,7 +45,7 @@ export function Tabs({ tab, onTabChange }: TabsProps) {
         ))}
       </div>
       {tab === 'month' && (
-        <span className={styles.monthLabel}>{monthLabel}</span>
+        <DateNav month={month} onChange={onMonthChange} bounds={monthBounds} />
       )}
     </div>
   );
