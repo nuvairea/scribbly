@@ -33,7 +33,7 @@ export function Sidebar({
         whileTap={{ scale: 0.96 }}
       >
         <PlusCircle size={20} />
-        <span>New note</span>
+        <span>New scribble</span>
       </motion.button>
 
       <nav className={styles.nav}>
