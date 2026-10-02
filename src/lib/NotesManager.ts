@@ -1,6 +1,7 @@
 import type { Note, PendingOp } from '../types/note';
 import { request } from '../lib/api';
 import { filterNotes } from './NoteQueries';
+import type { MonthPosition } from './NoteQueries';
 
 export class NotesManager {
   notes: Note[] = [];
@@ -52,7 +53,7 @@ export class NotesManager {
       id: note.id ?? note._id?.toString() ?? '',
       title: note.title ?? '',
       body: note.body ?? '',
-      color: note.color ?? '#eada76',
+      color: note.color ?? '#e9e381',
       date: note.date ?? '',
       time: note.time ?? '',
       timestamp,
@@ -359,8 +360,8 @@ export class NotesManager {
     }
   }
 
-  getNotes(isDeleted: boolean, search?: string, tab?: string): Note[] {
-    return filterNotes(this.notes, isDeleted, search, tab);
+  getNotes(isDeleted: boolean, search?: string, tab?: string, viewedMonth: MonthPosition | null = null): Note[] {
+    return filterNotes(this.notes, isDeleted, search, tab, viewedMonth);
   }
 
   private async setAuthContext(isAuthenticated: boolean, userId: string | null = null): Promise<void> {
