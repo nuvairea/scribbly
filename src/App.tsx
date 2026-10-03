@@ -54,7 +54,12 @@ function App() {
                   onMonthChange={setSelectedMonth}
                   monthBounds={monthBounds}
                 />
-                <NotesGrid search={searchQuery} tab={selectedTab} onAddNote={() => console.log('add note clicked')} />
+                <NotesGrid
+                  search={searchQuery}
+                  tab={selectedTab}
+                  month={selectedMonth}
+                  onAddNote={() => console.log('add note clicked')}
+                />
               </>
             )}
 

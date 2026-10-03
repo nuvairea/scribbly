@@ -1,16 +1,18 @@
 import { useNotes } from '../hooks/useNotes';
 import { NoteCard } from './NoteCard';
+import type { MonthPosition } from '../lib/NoteQueries';
 import styles from './NotesGrid.module.css';
 
 interface NotesGridProps {
   search?: string;
   tab?: string;
+  month?: MonthPosition;
   onAddNote?: () => void;
 }
 
-export function NotesGrid({ search = '', tab = 'all' }: NotesGridProps) {
+export function NotesGrid({ search = '', tab = 'all', month }: NotesGridProps) {
   const { getNotes } = useNotes();
-  const notes = getNotes(false, search, tab);
+  const notes = getNotes(false, search, tab, month ?? null);
 
   return (
     <div className={styles.wrapper}>
