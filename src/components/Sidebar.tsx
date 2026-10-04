@@ -1,4 +1,4 @@
-import { PlusCircle, LayoutGrid, Trash2 } from 'lucide-react';
+import { PlusCircle, LayoutGrid, Trash } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './Sidebar.module.css';
 
@@ -46,7 +46,7 @@ export function Sidebar({
           className={`${styles.navItem} ${view === 'trash' ? styles.navItemActive : ''}`}
           onClick={() => onViewChange('trash')}
         >
-          <Trash2 size={18} />
+          <Trash size={18} />
           <span>Trash</span>
           {trashCount > 0 && <span className={styles.badge}>{trashCount}</span>}
           {view === 'trash' && <motion.span layoutId='nav-active-bar' className={styles.activeBar} />}
