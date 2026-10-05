@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://scribbly-server.onrender.com';
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'https://scribbly-server.onrender.com';
 
 type RequestSuccess<T> = { ok: true; status: number; data: T };
 type RequestFailure = { ok: false; status: number; data: { error: string } };
