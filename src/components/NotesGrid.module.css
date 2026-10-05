@@ -11,3 +11,44 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 25px;
 }
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.emptyIcon {
+  display: block;
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 14px;
+  color: var(--color-text-primary);
+  stroke-width: 1.8;
+}
+
+.emptyState h2 {
+  font: 600 16px;
+  color: var(--color-text-primary);
+  margin: 0 0 6px;
+}
+
+.emptyState p {
+  font-size: 13px;
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.emptyAction {
+  margin-top: 16px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  color: var(--color-bg-surface);
+  background-color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.search {
+  font-size: 16px;
+  color: var(--color-text-primary);
+}
