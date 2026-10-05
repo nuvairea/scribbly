@@ -25,10 +25,17 @@
 }
 
 .content {
+  min-height: 0;
   flex: 1;
-  padding: 10px 30px;
+  overflow-y: auto;
+  padding: 24px 30px 10px;
   background: var(--color-bg-muted);
   border-top-left-radius: 16px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
