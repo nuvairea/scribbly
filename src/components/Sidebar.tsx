@@ -27,10 +27,10 @@ export function Sidebar({
     <aside className={styles.sidebar}>
       <h1 className={styles.brand}>Scribbly</h1>
 
-      <motion.button className={styles.addIcon} onClick={onAddNote} whileTap={{ scale: 0.96 }}>
+      <button className={styles.addIcon} onClick={onAddNote}>
         <PlusCircle size={20} />
         <span>New scribble</span>
-      </motion.button>
+      </button>
 
       <nav className={styles.nav}>
         <button
