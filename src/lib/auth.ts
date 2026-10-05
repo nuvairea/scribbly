@@ -1,15 +1,21 @@
 import { request } from './api';
 
-export function signup(email: string, password: string) {
-  return request('/signup', { method: 'POST', body: JSON.stringify({ email, password }) });
-}
+export type User = {
+  userId: string;
+  email: string;
+  firstName: string;
+  picture: string;
+};
 
-export function login(email: string, password: string) {
-  return request('/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+export function loginWithGoogle(code: string) {
+  return request<User>('/auth/google', {
+    method: 'POST',
+    body: JSON.stringify({ code }),
+  });
 }
 
 export function checkSession() {
-  return request('/me', { method: 'GET' });
+  return request<User>('/me', { method: 'GET' });
 }
 
 export function logout() {
