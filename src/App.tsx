@@ -81,27 +81,25 @@ function Dashboard() {
           />
           <div className={styles.content}>
             {view === 'notes' && (
-              <>
-                <Tabs
-                  tab={selectedTab}
-                  onTabChange={setSelectedTab}
-                  month={selectedMonth}
-                  onMonthChange={setSelectedMonth}
-                  monthBounds={monthBounds}
-                />
-                <NotesGrid
-                  view={view}
-                  search={searchQuery}
-                  tab={selectedTab}
-                  month={selectedMonth}
-                  onOpenNote={openExistingNote}
-                  onViewChange={setView}
-                />
-              </>
+              <Tabs
+                tab={selectedTab}
+                onTabChange={setSelectedTab}
+                month={selectedMonth}
+                onMonthChange={setSelectedMonth}
+                monthBounds={monthBounds}
+              />
             )}
 
+            <NotesGrid
+              view={view}
+              search={searchQuery}
+              tab={selectedTab}
+              month={selectedMonth}
+              onOpenNote={openExistingNote}
+              onViewChange={setView}
+            />
+
             <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
-            {view === 'trash' && <div className={styles.notesList} />}
           </div>
         </main>
       </div>
