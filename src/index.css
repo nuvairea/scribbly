@@ -22,8 +22,7 @@ body,
 
 @font-face {
   font-family: 'Dancing Script';
-  src: url('./assets/fonts/DancingScript-VariableFont_wght.ttf')
-    format('truetype');
+  src: url('./assets/fonts/DancingScript-VariableFont_wght.ttf') format('truetype');
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -47,10 +46,10 @@ button {
   --color-bg-page: #e6e7e9;
   --color-bg-surface: #ffffff;
   --color-bg-muted: #f0f2f5;
-  --color-bg-selected: #eef0f2;
+  --color-bg-selected: #ecf6ff;
   --color-bg-search: #f4f5f8;
   --color-border: #eeeeee;
-
+  --color-modal: #f1f1f1;
   --color-text-primary: #111111;
   --color-text-secondary: #a0a4ab;
 
@@ -62,12 +61,6 @@ button {
 
   --color-shadow: rgba(0, 0, 0, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.23);
-
-  --color-note-blue: #6cb5de;
-  --color-note-coral: #eea9ab;
-  --color-note-yellow: #e9e381;
-  --color-note-mint: #85f09c;
-  --color-note-lavender: #c9a9e0;
 
   --font-family-base: 'Manrope', sans-serif;
   --radius-sm: 10px;
@@ -84,8 +77,9 @@ button {
     --color-bg-page: #121212;
     --color-bg-surface: #181818;
     --color-bg-muted: #000000;
-    --color-bg-selected: #242424;
+    --color-bg-selected: #272727;
     --color-bg-search: #0f0f0f;
+    --color-modal: #242424;
     --color-border: #2c2c2c;
 
     --color-text-primary: #f0f2f5;
@@ -98,6 +92,6 @@ button {
     --color-card-action-color: #111111;
 
     --color-shadow: rgba(0, 0, 0, 0.3);
-    --color-overlay: rgba(0, 0, 0, 0.6);
+    --color-overlay: rgba(0, 0, 0, 0.31);
   }
 }
