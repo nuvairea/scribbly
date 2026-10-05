@@ -13,15 +13,6 @@ export class NotesManager {
 
   private onChange?: () => void;
 
-  editorPlaceholder: string[] = [
-    'Start scribbling...',
-    "Today's multi-dollar idea?",
-    "Nothing's too dumb to write down.",
-    "Future you says thanks.",
-    'Brain dump goes here...',
-    "Draft one of many...",
-  ];
-
   constructor() {
     this.localMigrationDone = Boolean(localStorage.getItem('scribbly_migration_done'));
 
@@ -37,10 +28,6 @@ export class NotesManager {
     this.pendingCache = JSON.parse(localStorage.getItem('scribbly_pending_cache') || '[]');
 
     window.addEventListener('online', () => this.flushPendingSync());
-  }
-
-  private random(arr: string[]): string {
-    return arr[Math.floor(Math.random() * arr.length)];
   }
 
   private normalizeNote(note: Partial<Note> & { _id?: string | number }): Note {
@@ -90,11 +77,6 @@ export class NotesManager {
       "...it doesn't.\nbut it'd be really cool if it did.\nwelcome to Scribbly!",
       '#e9e381'
     );
-  }
-
-  public setEditorPlaceholder(editorEl: HTMLTextAreaElement | null | undefined): void {
-    if (!editorEl) return;
-    editorEl.placeholder = this.random(this.editorPlaceholder);
   }
 
   public async addNote(title: string, body: string, color: string): Promise<Note> {
