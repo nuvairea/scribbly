@@ -14,7 +14,7 @@ import styles from './NoteCard.module.css';
 interface NoteCardProps {
   note: Note;
   view: 'notes' | 'trash';
-  onOpen: (id: string) => void;
+  onOpen: () => void;
   onToggleDelete: (id: string) => void;
 }
 
@@ -31,7 +31,11 @@ export function NoteCard({
     <div
       className={styles.card}
       style={{ backgroundColor: note.color }}
-      onClick={() => onOpen(note.id)}
+      onClick={() => {
+        if (!isTrash && !note.deleted) {
+          onOpen();
+        }
+      }}
     >
       <div className={styles.topRow}>
         <span className={styles.date}>{note.date}</span>
