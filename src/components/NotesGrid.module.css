@@ -40,8 +40,8 @@
 
 .emptyAction {
   margin-top: 16px;
-  padding: 10px 20px;
-  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
   color: var(--color-bg-surface);
   background-color: var(--color-text-primary);
   font-size: 13px;
