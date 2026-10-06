@@ -183,7 +183,7 @@ export class NotesManager {
 
   public async updateNote(id: string, title: string, body: string, color: string): Promise<Note | null> {
     const note = this.notes.find((entry) => entry.id === id);
-    if (!note) {
+    if (!note || note.deleted) {
       return null;
     }
 
