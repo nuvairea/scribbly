@@ -46,9 +46,9 @@ button {
   --color-bg-page: #e6e7e9;
   --color-bg-surface: #ffffff;
   --color-bg-muted: #f0f2f5;
-  --color-bg-selected: #ecf6ff;
+  --color-bg-selected: #f0f0f0;
   --color-bg-search: #f4f5f8;
-  --color-border: #eeeeee;
+  --color-border: #dddddd;
   --color-modal: #f1f1f1;
   --color-text-primary: #111111;
   --color-text-secondary: #a0a4ab;
