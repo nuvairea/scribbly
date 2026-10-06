@@ -89,6 +89,11 @@
   &:active {
     transform: scale(0.98);
   }
+
+  &:disabled {
+    background-color: var(--color-text-secondary);
+    cursor: wait;
+  }
 }
 
 .guestBtn {
