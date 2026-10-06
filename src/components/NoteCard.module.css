@@ -92,13 +92,12 @@
 }
 
 .body {
-  flex: 1;
-  margin: 0 0 16px;
   font-size: 13px;
   line-height: 1.5;
+  overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 7;
-  line-clamp: 7;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
   -webkit-box-orient: vertical;
   white-space: pre-wrap;
 }
