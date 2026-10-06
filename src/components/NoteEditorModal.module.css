@@ -73,7 +73,7 @@
 
 .colors {
   display: flex;
-  gap: 10px;
+  gap: 13px;
   margin-bottom: 16px;
 }
 
@@ -82,10 +82,11 @@
   height: 18px;
   border-radius: 50%;
   border: 2px solid transparent;
-  transition: border-color 0.15s;
+  transition: outline 0.35s;
 
   &[data-active='true'] {
-    border-color: var(--color-text-primary);
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
   }
 }
 
