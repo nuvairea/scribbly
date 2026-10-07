@@ -1,11 +1,13 @@
+<p align="center">
+  <a href="https://github.com/nuvairea/scribbly/tree/react-rewrite"><img src="https://img.shields.io/badge/status-in_progress-orange?style=flat-square" alt="Status: in progress" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-TypeScript-61dafb?style=flat-square&logo=react&logoColor=111111" alt="React and TypeScript" /></a>
+  <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License: MIT" /></a>
+</p>
+
 # Scribbly
 
 > Offline first space for notes, thoughts, and scribbles.
-
-[![Status](https://img.shields.io/badge/status-in_progress-orange?style=flat-square)](https://github.com/nuvairea/scribbly/tree/react-rewrite)
-[![React](https://img.shields.io/badge/React-TypeScript-61dafb?style=flat-square&logo=react&logoColor=111111)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Vite-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
 
 Write freely, stay in flow, and keep your thoughts close, even without a connection.
 
