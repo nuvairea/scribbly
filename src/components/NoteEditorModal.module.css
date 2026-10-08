@@ -13,20 +13,21 @@
 .modal {
   width: min(450px, 90vw);
   max-height: 80vh;
+  height: 380px;
   display: flex;
   flex-direction: column;
   background: var(--color-modal);
   border-radius: var(--radius-md);
-  padding: 18px 24px 24px;
+  padding: 22px;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 3px;
 }
 
 .titleInput {
@@ -38,16 +39,24 @@
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
   background: none;
+  white-space: nowrap;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
 .closeButton {
   display: flex;
   color: var(--color-text-secondary);
+  padding: 12px;
   border-radius: 50%;
-  padding: 10px;
-  transition: color 0.15s;
+  background: transparent;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
+    background: var(--color-bg-selected);
     color: var(--color-text-primary);
   }
 }
@@ -63,8 +72,11 @@
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
   background: none;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   scrollbar-width: none;
+  padding-top: 8px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
 
   &::-webkit-scrollbar {
     display: none;
