@@ -92,9 +92,11 @@
 }
 
 .body {
+  min-width: 0;
   font-size: 13px;
   line-height: 1.5;
   overflow: hidden;
+  overflow-wrap: anywhere;
   display: -webkit-box;
   -webkit-line-clamp: 6;
   line-clamp: 6;
