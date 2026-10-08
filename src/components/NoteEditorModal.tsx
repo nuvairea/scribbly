@@ -42,6 +42,12 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
   const [placeholder] = useState(() => PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]);
 
   const handleDone = () => {
+    const isEmpty = title.trim() === '' && body.trim() === '';
+    if (isEmpty) {
+      onClose();
+      return;
+    }
+
     if (note) {
       updateNote(note.id, title, body, color);
     } else {
