@@ -8,8 +8,9 @@ import { SplashScreen } from './components/SplashScreen';
 import styles from './App.module.css';
 import { useNotes } from './hooks/useNotes';
 import { getMonthBounds, type MonthPosition } from './lib/NoteQueries';
-import { checkSession, loginWithGoogle, type User } from './lib/auth';
+import { checkSession, deleteAccount, loginWithGoogle, logout, type User } from './lib/auth';
 import { NoteEditorModal } from './components/NoteEditorModal';
+import { SettingsModal } from './components/SettingsModal';
 import type { Note } from './types/note';
 
 type AuthState = 'loading' | 'auth' | 'notes';
@@ -30,6 +31,15 @@ function readCachedUser(): User | null {
 function App() {
   const [authState, setAuthState] = useState<AuthState>('loading');
   const [user, setUser] = useState<User | null>(null);
+  const { setAuthContext } = useNotes();
+
+  useEffect(() => {
+    if (user) {
+      void setAuthContext(true, user.userId);
+    } else {
+      void setAuthContext(false, null);
+    }
+  }, [user, setAuthContext]);
 
   useEffect(() => {
     const cached = readCachedUser();
@@ -96,14 +106,56 @@ function App() {
     return <AuthModal onGoogle={handleGoogle} onGuest={handleGuest} />;
   }
 
-  return <Dashboard user={user} />;
+  const handleLogout = async () => {
+    const result = await logout();
+    if (!result.ok) {
+      console.error('Logout failed:', result.data.error);
+      return;
+    }
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(GUEST_KEY);
+    setUser(null);
+    setAuthState('auth');
+  };
+
+  const handleDeleteAccount = async () => {
+    const result = await deleteAccount();
+    if (!result.ok) {
+      console.error('Account deletion failed:', result.data.error);
+      return;
+    }
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(GUEST_KEY);
+    setUser(null);
+    setAuthState('auth');
+  };
+
+  return (
+    <Dashboard
+      user={user}
+      onLogout={handleLogout}
+      onDeleteAccount={handleDeleteAccount}
+      onLoginPrompt={() => setAuthState('auth')}
+    />
+  );
 }
 
-function Dashboard({ user }: { user: User | null }) {
+function Dashboard({
+  user,
+  onLogout,
+  onDeleteAccount,
+  onLoginPrompt,
+}: {
+  user: User | null;
+  onLogout: () => Promise<void>;
+  onDeleteAccount: () => Promise<void>;
+  onLoginPrompt: () => void;
+}) {
   const { notes } = useNotes();
   const [view, setView] = useState<'notes' | 'trash'>('notes');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [selectedMonth, setSelectedMonth] = useState<MonthPosition>({
     month: new Date().getMonth(),
@@ -144,7 +196,7 @@ function Dashboard({ user }: { user: User | null }) {
           view={view}
           onViewChange={setView}
           onAddNote={openNewNote}
-          onOpenSettings={() => console.log('settings clicked')}
+          onOpenSettings={() => setSettingsOpen(true)}
           userLabel={user?.firstName ?? 'Guest'}
           userPicture={user?.picture}
           notesCount={notesCount}
@@ -181,6 +233,15 @@ function Dashboard({ user }: { user: User | null }) {
           </div>
         </main>
       </div>
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        isGuest={!user}
+        userEmail={user?.email}
+        onLogout={onLogout}
+        onDeleteAccount={onDeleteAccount}
+        onLoginPrompt={onLoginPrompt}
+      />
     </div>
   );
 }
