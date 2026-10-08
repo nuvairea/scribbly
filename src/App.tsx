@@ -16,6 +16,7 @@ type AuthState = 'loading' | 'auth' | 'notes';
 
 const USER_KEY = 'scribbly:user';
 const GUEST_KEY = 'scribbly:guest';
+const SPLASH_MAX_MS = 2000;
 
 function readCachedUser(): User | null {
   try {
@@ -45,8 +46,10 @@ function App() {
       }
     };
 
+    const timer = setTimeout(applyAuthFallback, SPLASH_MAX_MS);
     checkSession()
       .then((result) => {
+        clearTimeout(timer);
         if (result.ok) {
           localStorage.setItem(USER_KEY, JSON.stringify(result.data));
           localStorage.removeItem(GUEST_KEY);
@@ -59,7 +62,12 @@ function App() {
           applyAuthFallback();
         }
       })
-      .catch(applyAuthFallback);
+      .catch(() => {
+        clearTimeout(timer);
+        applyAuthFallback();
+      });
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleGoogle = async (code: string) => {
@@ -113,6 +121,8 @@ function Dashboard({ user }: { user: User | null }) {
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
 
+  const unsyncedCount = notes.filter((n) => n.pendingSync || n.syncError).length;
+
   const openNewNote = () => {
     setEditingNote(null);
     setEditorOpen(true);
@@ -145,6 +155,7 @@ function Dashboard({ user }: { user: User | null }) {
             title={view === 'notes' ? 'Notes' : 'Trash'}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
+            unsyncedCount={unsyncedCount}
           />
           <div className={styles.content}>
             {view === 'notes' && (
