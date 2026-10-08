@@ -1,13 +1,6 @@
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import {
-  MoreHorizontal,
-  Undo2,
-  Trash2,
-  CloudSync,
-  CloudAlert,
-  Clock,
-} from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { MoreHorizontal, Undo2, Trash, Clock } from 'lucide-react';
 import type { Note } from '../types/note';
 import styles from './NoteCard.module.css';
 
@@ -18,12 +11,7 @@ interface NoteCardProps {
   onToggleDelete: (id: string) => void;
 }
 
-export function NoteCard({
-  note,
-  view,
-  onOpen,
-  onToggleDelete,
-}: NoteCardProps) {
+export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isTrash = view === 'trash';
 
@@ -40,11 +28,7 @@ export function NoteCard({
       <div className={styles.topRow}>
         <span className={styles.date}>{note.date}</span>
 
-        <div
-          className={styles.menuWrapper}
-          tabIndex={0}
-          onBlur={() => setMenuOpen(false)}
-        >
+        <div className={styles.menuWrapper} tabIndex={0} onBlur={() => setMenuOpen(false)}>
           <button
             type='button'
             className={styles.kebabButton}
@@ -74,7 +58,7 @@ export function NoteCard({
                     onToggleDelete(note.id);
                   }}
                 >
-                  {isTrash ? <Undo2 size={14} /> : <Trash2 size={14} />}
+                  {isTrash ? <Undo2 size={14} /> : <Trash size={14} />}
                   <span>{isTrash ? 'Restore' : 'Delete'}</span>
                 </button>
               </motion.div>
@@ -94,22 +78,6 @@ export function NoteCard({
       <p className={styles.body}>{note.body}</p>
 
       <div className={styles.footer}>
-        {note.pendingSync && (
-          <span
-            title='Waiting to sync to your account'
-            className={styles.syncIcon}
-          >
-            <CloudSync size={14} aria-hidden='true' />
-          </span>
-        )}
-        {!note.pendingSync && note.syncError && (
-          <span
-            title="Couldn't sync to your account yet. We'll keep retrying."
-            className={styles.syncIcon}
-          >
-            <CloudAlert size={14} aria-hidden='true' />
-          </span>
-        )}
         <Clock size={14} />
         <span>{note.time}</span>
       </div>
