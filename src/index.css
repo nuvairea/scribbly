@@ -61,6 +61,7 @@ button {
 
   --color-shadow: rgba(0, 0, 0, 0.05);
   --color-overlay: rgba(0, 0, 0, 0.23);
+  --color-danger: #d85a30;
 
   --font-family-base: 'Manrope', sans-serif;
   --radius-sm: 10px;
@@ -93,5 +94,6 @@ button {
 
     --color-shadow: rgba(0, 0, 0, 0.3);
     --color-overlay: rgba(0, 0, 0, 0.31);
+    --color-danger: #e2524f;
   }
 }
