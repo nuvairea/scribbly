@@ -346,7 +346,7 @@ export class NotesManager {
     return filterNotes(this.notes, isDeleted, search, tab, viewedMonth);
   }
 
-  private async setAuthContext(isAuthenticated: boolean, userId: string | null = null): Promise<void> {
+  public async setAuthContext(isAuthenticated: boolean, userId: string | null = null): Promise<void> {
     const changed = this.isAuthenticated !== isAuthenticated || this.userId !== userId;
     this.isAuthenticated = isAuthenticated;
     this.userId = userId;
