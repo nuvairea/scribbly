@@ -19,6 +19,7 @@ export class NotesManager {
     const lastSession = JSON.parse(localStorage.getItem('scribbly_last_session') || 'null');
 
     if (lastSession) {
+      this.userId = lastSession.userId;
       this.notes = this.loadSyncedNotes(lastSession.userId) || [];
     } else {
       this.loadLocalNotes();
@@ -130,13 +131,13 @@ export class NotesManager {
       );
 
     if (!result.ok) {
-      this.markSyncFailure(note, op);
+      this.markSyncFailure(note, op, result);
       this.save();
       return;
     }
 
     if (!result.data.note) {
-      this.markSyncFailure(note, op);
+      this.markSyncFailure(note, op, { ok: false, status: result.status });
       this.save();
       return;
     }
@@ -147,7 +148,7 @@ export class NotesManager {
   }
 
   private save(): void {
-    if (this.isAuthenticated) {
+    if (this.userId) {
       this.savePendingCache();
       this.saveSyncedNotes();
     } else {
@@ -157,7 +158,8 @@ export class NotesManager {
     this.onChange?.();
   }
 
-  private markSyncFailure(note: Note, op: PendingOp | null): void {
+  private markSyncFailure(note: Note, op: PendingOp | null, result:
+    { ok: boolean; status: number }): void {
     note.pendingOp = note.pendingOp === 'create' ? 'create' : op;
     note.syncAttempts = (note.syncAttempts || 0) + 1;
     note.pendingSync = note.syncAttempts < 5;
@@ -178,6 +180,12 @@ export class NotesManager {
       return;
     }
     localStorage.setItem(`scribbly_synced_notes_${this.userId}`, JSON.stringify(this.notes));
+  }
+
+  private clearAccountCache(userId: string): void {
+    localStorage.removeItem(`scribbly_synced_notes_${userId}`);
+    localStorage.removeItem('scribbly_pending_cache');
+    localStorage.removeItem('scribbly_last_session');
   }
 
   public async updateNote(id: string, title: string, body: string, color: string): Promise<Note | null> {
@@ -299,7 +307,7 @@ export class NotesManager {
           const serverNote = this.normalizeNote(result.data.note);
           this.notes = this.notes.map((entry) => entry.id === note.id ? serverNote : entry);
         } else if (result.status !== 0) {
-          this.markSyncFailure(note, note.pendingOp);
+          this.markSyncFailure(note, note.pendingOp, result);
           this.notes = this.notes.map((entry) => entry.id === note.id ? note : entry);
         }
       }
@@ -346,15 +354,25 @@ export class NotesManager {
   }
 
   public async setAuthContext(isAuthenticated: boolean, userId: string | null = null): Promise<void> {
+    const previousUserId = this.userId;
     const changed = this.isAuthenticated !== isAuthenticated || this.userId !== userId;
     this.isAuthenticated = isAuthenticated;
     this.userId = userId;
 
     if (!isAuthenticated) {
       this.serverHydrated = false;
+
+      if (previousUserId) {
+        this.clearAccountCache(previousUserId);
+        this.pendingCache = [];
+        this.loadLocalNotes();
+      }
+
       this.save();
       return;
     }
+
+    localStorage.setItem('scribbly_last_session', JSON.stringify({ userId }));
 
     if (changed || !this.serverHydrated) {
       await this.syncWithServer();
