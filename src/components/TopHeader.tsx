@@ -1,17 +1,14 @@
-import { Search } from 'lucide-react';
+import { CloudAlert, Search } from 'lucide-react';
 import styles from './TopHeader.module.css';
 
 interface TopHeaderProps {
   title: string;
   searchValue: string;
   onSearchChange: (value: string) => void;
+  unsyncedCount: number;
 }
 
-export function TopHeader({
-  title,
-  searchValue,
-  onSearchChange,
-}: TopHeaderProps) {
+export function TopHeader({ title, searchValue, onSearchChange, unsyncedCount }: TopHeaderProps) {
   return (
     <header className={styles.header}>
       <h1 className={styles.title}>{title}</h1>
@@ -25,6 +22,12 @@ export function TopHeader({
           onChange={(event) => onSearchChange(event.target.value)}
         />
       </label>
+      {unsyncedCount > 0 && (
+        <div className={styles.syncBadge}>
+          <CloudAlert size={16} />
+          <span>{unsyncedCount} unsynced</span>
+        </div>
+      )}
     </header>
   );
 }

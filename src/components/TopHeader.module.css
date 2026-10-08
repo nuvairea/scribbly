@@ -1,11 +1,12 @@
 .header {
   position: relative;
   display: flex;
-  min-height: 80px;
+  min-height: 85px;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 0 32px;
+  padding: 0 24px;
+  margin: 0;
   background: var(--color-bg-surface);
 }
 
@@ -24,7 +25,7 @@
   width: min(300px, 45%);
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
+  padding: 13px 16px;
   border: 1px solid transparent;
   border-radius: 5px;
   background: var(--color-bg-search);
@@ -49,6 +50,14 @@
 
 .search input::placeholder {
   color: var(--color-text-secondary);
+}
+
+.syncBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-danger);
 }
 
 @media (max-width: 640px) {
