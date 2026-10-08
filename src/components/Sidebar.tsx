@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { PlusCircle, LayoutGrid, Trash } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -8,6 +9,7 @@ interface SidebarProps {
   onAddNote: () => void;
   onOpenSettings: () => void;
   userLabel: string;
+  userPicture?: string;
   notesCount: number;
   trashCount: number;
 }
@@ -18,10 +20,12 @@ export function Sidebar({
   onAddNote,
   onOpenSettings,
   userLabel,
+  userPicture,
   notesCount,
   trashCount,
 }: SidebarProps) {
   const initial = userLabel.charAt(0).toUpperCase();
+  const [imgFailed, setImgFailed] = useState(false);
 
   return (
     <aside className={styles.sidebar}>
@@ -56,7 +60,17 @@ export function Sidebar({
       <div className={styles.spacer} />
 
       <button className={styles.profile} onClick={onOpenSettings}>
-        <div className={styles.avatar}>{initial}</div>
+        {userPicture && !imgFailed ? (
+          <img
+            src={userPicture}
+            alt=''
+            className={styles.avatarImg}
+            referrerPolicy='no-referrer'
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div className={styles.avatar}>{initial}</div>
+        )}
         <span className={styles.profileText}>
           <span className={styles.name}>{userLabel}</span>
           <span className={styles.description}>Profile & settings</span>
