@@ -91,7 +91,6 @@
   }
 
   &:disabled {
-    background-color: var(--color-text-secondary);
     cursor: wait;
   }
 }
