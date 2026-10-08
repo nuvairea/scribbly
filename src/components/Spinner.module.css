@@ -1,0 +1,58 @@
+.spinner {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.spinner span {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 2px;
+  height: 6px;
+  border-radius: 1px;
+  background-color: currentColor;
+  animation: fade 0.9s linear infinite;
+}
+
+.spinner span:nth-child(1) {
+  transform: rotate(0deg) translateY(-6.5px);
+  animation-delay: -0.9s;
+}
+.spinner span:nth-child(2) {
+  transform: rotate(45deg) translateY(-6.5px);
+  animation-delay: -0.7875s;
+}
+.spinner span:nth-child(3) {
+  transform: rotate(90deg) translateY(-6.5px);
+  animation-delay: -0.675s;
+}
+.spinner span:nth-child(4) {
+  transform: rotate(135deg) translateY(-6.5px);
+  animation-delay: -0.5625s;
+}
+.spinner span:nth-child(5) {
+  transform: rotate(180deg) translateY(-6.5px);
+  animation-delay: -0.45s;
+}
+.spinner span:nth-child(6) {
+  transform: rotate(225deg) translateY(-6.5px);
+  animation-delay: -0.3375s;
+}
+.spinner span:nth-child(7) {
+  transform: rotate(270deg) translateY(-6.5px);
+  animation-delay: -0.225s;
+}
+.spinner span:nth-child(8) {
+  transform: rotate(315deg) translateY(-6.5px);
+  animation-delay: -0.1125s;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}

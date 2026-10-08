@@ -1,106 +1,33 @@
 # Scribbly
 
-> Quick, clean note taking for the web.
+> Offline first space for notes, thoughts, and scribbles.
 
-[![Live app](https://img.shields.io/badge/live_app-scribbly--app.onrender.com-2f6f61?style=flat-square)](https://scribbly-app.onrender.com)
-[![Vanilla JavaScript](https://img.shields.io/badge/JavaScript-vanilla-f7df1e?style=flat-square&logo=javascript&logoColor=111111)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![PWA](https://img.shields.io/badge/PWA-installable-5a4fcf?style=flat-square)](https://web.dev/progressive-web-apps/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+> <p align="center">
+  <a href="https://github.com/nuvairea/scribbly/tree/react-rewrite"><img src="https://img.shields.io/badge/status-in_progress-orange?style=flat-square" alt="Status: in progress" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-TypeScript-61dafb?style=flat-square&logo=react&logoColor=111111" alt="React and TypeScript" /></a>
+  <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License: MIT" /></a>
+</p>
 
-Scribbly is a focused note-taking app with fast local editing, searchable notes, color tags, and optional account-based sync. It works as a responsive web app and an installable Progressive Web App.
+Write freely, stay in flow, and keep your thoughts close, even without a connection.
 
-## Preview
+This is the v3 rewrite, React + TypeScript, replacing the original vanilla JS build. In progress on `react-rewrite`; the live version at [scribbly-app.onrender.com](https://scribbly-app.onrender.com) is still running v2 ([tagged here](https://github.com/nuvairea/scribbly/releases/tag/v2.0.0)).
 
-<table>
-  <tr>
-    <th align="left" width="78%">Desktop dashboard</th>
-    <th align="left" width="22%">Mobile dashboard</th>
-  </tr>
-  <tr>
-    <td width="78%"><img src="./assets/screenshots/desktop-1.png" alt="Scribbly desktop dashboard" height="420" style="max-width: 100%;"></td>
-    <td width="22%"><img src="./assets/screenshots/mobile-1.png" alt="Scribbly mobile dashboard" height="420" style="max-width: 100%;"></td>
-  </tr>
-  <tr>
-    <th align="left" width="78%">Desktop note editor</th>
-    <th align="left" width="22%">Mobile note editor</th>
-  </tr>
-  <tr>
-    <td width="78%"><img src="./assets/screenshots/desktop-2.png" alt="Scribbly desktop note editor" height="420" style="max-width: 100%;"></td>
-    <td width="22%"><img src="./assets/screenshots/mobile-2.png" alt="Scribbly mobile note editor" height="420" style="max-width: 100%;"></td>
-  </tr>
-</table>
+## Why I'm rebuilding it
 
-## Features
+v2 worked, but it got messy to maintain, and I wanted to try doing it properly this time: real typing, real component structure, cleaner state management, and a bit more intention behind how it feels to use day to day.
 
-- Create, edit, and color-tag notes
-- Search across all notes
-- Filter notes by today, this week, or this month
-- Soft-delete notes and recover them from Recently Deleted
-- Sign up, log in, or continue as a guest
-- Sync notes automatically when logged in
-- Continue working offline with automatic retry when a save fails
-- Install the app as a PWA for offline app-shell access
-- Switch between light and dark themes, or follow the system preference
-- Manage your account and data from a dedicated Settings page: export notes as JSON, permanently clear trash, or delete your account
+## Status
+
+Actively being rebuilt. Core notes experience (create, edit, trash, search, tabs/month filtering) is mostly in place; account sync, settings, and theming are still being wired up. Not tagged yet, `v3.0.0-alpha` once the core flow is usable end to end.
 
 ## Built with
 
-- Vanilla JavaScript using ES modules
-- HTML and CSS custom properties for responsive theming
-- A service worker for offline app-shell caching
-- `fetch` and session-cookie authentication
-
-## Getting started
-
-Scribbly is a static frontend with no build step.
-
-```bash
-git clone https://github.com/nuvairea/scribbly.git
-cd scribbly
-```
-
-Serve the directory with any static server. Opening `index.html` directly is not recommended because ES modules and the service worker require an HTTP origin:
-
-```bash
-npx live-server
-# or
-python3 -m http.server 5500
-```
-
-Then open the local URL shown by the server. The frontend connects to the deployed Scribbly API by default. To run the complete stack locally, use the backend project linked below.
-
-## Project structure
-
-```text
-scribbly/
-├── index.html
-├── manifest.json
-├── sw.js
-├── css/
-│   ├── base.css         # variables, fonts, resets, and theme styles
-│   ├── header.css       # app header and search styles
-│   ├── modals.css       # note and authentication modals
-│   ├── notes.css        # note cards, tabs, and empty states
-│   ├── responsive.css   # mobile layout rules
-│   ├── settings.css     # settings modal and controls
-│   ├── sidebar.css      # navigation and account menu
-│   └── toast.css        # notification styles
-├── js/
-│   ├── main.js          # application bootstrap and module wiring
-│   ├── app-utils.js     # shared event and button utilities
-│   ├── auth.js          # authentication API calls
-│   ├── auth-events.js   # authentication and account event handlers
-│   ├── note-events.js   # note, navigation, search, and tab handlers
-│   ├── notes.js         # note CRUD, caching, and sync logic
-│   ├── theme.js         # theme selection and system preference handling
-│   └── ui.js            # rendering, DOM updates, and toast messages
-└── assets/
-  ├── favicons/
-  ├── fonts/
-  ├── iconify-icon.min.js
-  └── screenshots/
-```
+- React + TypeScript
+- Vite
+- Framer Motion
+- CSS Modules
 
 ## Backend
 
-The API is maintained in a separate Node.js and Express service. See the [Scribbly Server repository](https://github.com/nuvairea/scribbly-server)
+Shares the same API as v2, see [scribbly-server](https://github.com/nuvairea/scribbly-server).

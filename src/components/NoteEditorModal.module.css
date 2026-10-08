@@ -1,0 +1,118 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  width: min(450px, 90vw);
+  max-height: 80vh;
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-modal);
+  border-radius: var(--radius-md);
+  padding: 22px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+  margin-bottom: 3px;
+}
+
+.titleInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background: none;
+  white-space: nowrap;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+.closeButton {
+  display: flex;
+  color: var(--color-text-secondary);
+  padding: 12px;
+  border-radius: 50%;
+  background: transparent;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: var(--color-bg-selected);
+    color: var(--color-text-primary);
+  }
+}
+
+.body {
+  flex: 1;
+  min-height: 160px;
+  overflow-y: auto;
+  resize: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+  background: none;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+  padding-top: 8px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.colors {
+  display: flex;
+  gap: 13px;
+  margin-bottom: 16px;
+}
+
+.swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: outline 0.35s;
+
+  &[data-active='true'] {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 2px;
+  }
+}
+
+.doneBtn {
+  width: 100%;
+  padding: 15px;
+  border-radius: var(--radius-lg);
+  background: var(--color-text-primary);
+  color: var(--color-bg-surface);
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform 0.2s;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
