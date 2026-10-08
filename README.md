@@ -1,75 +1,33 @@
-# React + TypeScript + Vite
+<p align="center">
+  <a href="https://github.com/nuvairea/scribbly/tree/react-rewrite"><img src="https://img.shields.io/badge/status-in_progress-orange?style=flat-square" alt="Status: in progress" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-TypeScript-61dafb?style=flat-square&logo=react&logoColor=111111" alt="React and TypeScript" /></a>
+  <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License: MIT" /></a>
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Scribbly
 
-Currently, two official plugins are available:
+> Offline first space for notes, thoughts, and scribbles.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Write freely, stay in flow, and keep your thoughts close, even without a connection.
 
-## React Compiler
+This is the v3 rewrite, React + TypeScript, replacing the original vanilla JS build. In progress on `react-rewrite`; the live version at [scribbly-app.onrender.com](https://scribbly-app.onrender.com) is still running v2 ([tagged here](https://github.com/nuvairea/scribbly/releases/tag/v2.0.0)).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Why I'm rebuilding it
 
-## Expanding the ESLint configuration
+v2 worked, but it got messy to maintain, and I wanted to try doing it properly this time: real typing, real component structure, cleaner state management, and a bit more intention behind how it feels to use day to day.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Status
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Actively being rebuilt. Core notes experience (create, edit, trash, search, tabs/month filtering) is mostly in place; account sync, settings, and theming are still being wired up. Not tagged yet, `v3.0.0-alpha` once the core flow is usable end to end.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Built with
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- React + TypeScript
+- Vite
+- Framer Motion
+- CSS Modules
 
-```
+## Backend
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+Shares the same API as v2, see [scribbly-server](https://github.com/nuvairea/scribbly-server).
