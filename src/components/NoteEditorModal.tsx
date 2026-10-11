@@ -67,9 +67,10 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
     >
       <motion.div
         className={styles.modal}
-        initial={{ opacity: 0, translateY: 35 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        exit={{ opacity: 0, translateY: 100 }}
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', stiffness: 380, damping: 36 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.header}>
