@@ -30,10 +30,6 @@
   border-radius: 5px;
   background: var(--color-bg-search);
   color: var(--color-text-secondary);
-  transition:
-    background-color 0.25s,
-    color 0.25s,
-    border-color 0.25s;
   transform: translateX(-50%);
 }
 
