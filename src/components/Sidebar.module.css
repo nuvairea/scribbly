@@ -60,9 +60,6 @@
   color: var(--color-text-secondary);
   text-align: left;
   font-family: var(--font-family-base);
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
 
   &.navItemActive {
     background: var(--color-bg-selected);
