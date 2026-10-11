@@ -131,13 +131,13 @@ export class NotesManager {
       );
 
     if (!result.ok) {
-      this.markSyncFailure(note, op, result);
+      this.markSyncFailure(note, op);
       this.save();
       return;
     }
 
     if (!result.data.note) {
-      this.markSyncFailure(note, op, { ok: false, status: result.status });
+      this.markSyncFailure(note, op);
       this.save();
       return;
     }
@@ -158,8 +158,7 @@ export class NotesManager {
     this.onChange?.();
   }
 
-  private markSyncFailure(note: Note, op: PendingOp | null, result:
-    { ok: boolean; status: number }): void {
+  private markSyncFailure(note: Note, op: PendingOp | null): void {
     note.pendingOp = note.pendingOp === 'create' ? 'create' : op;
     note.syncAttempts = (note.syncAttempts || 0) + 1;
     note.pendingSync = note.syncAttempts < 5;
@@ -284,7 +283,14 @@ export class NotesManager {
 
       for (const note of pending) {
         let result;
-        const { pendingSync: _p, pendingOp: _o, syncError: _s, ...payload } = note;
+        const payload: Partial<Note> & {
+          pendingSync?: boolean;
+          pendingOp?: PendingOp | null;
+          syncError?: boolean;
+        } = { ...note };
+        delete payload.pendingSync;
+        delete payload.pendingOp;
+        delete payload.syncError;
 
         if (note.pendingOp === 'trash') {
           result = await request<{ note: Note }>(`/notes/${note.id}`, {
@@ -307,7 +313,7 @@ export class NotesManager {
           const serverNote = this.normalizeNote(result.data.note);
           this.notes = this.notes.map((entry) => entry.id === note.id ? serverNote : entry);
         } else if (result.status !== 0) {
-          this.markSyncFailure(note, note.pendingOp, result);
+          this.markSyncFailure(note, note.pendingOp);
           this.notes = this.notes.map((entry) => entry.id === note.id ? note : entry);
         }
       }
