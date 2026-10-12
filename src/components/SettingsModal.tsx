@@ -98,16 +98,16 @@ export function SettingsModal({
             role='dialog'
             aria-modal='true'
             aria-label='Settings'
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 380, damping: 36 }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.header}>
               <h1 className={styles.title}>Settings</h1>
               <button type='button' className={styles.closeButton} onClick={handleClose} aria-label='Close'>
-                <X size={18} />
+                <X size={22} />
               </button>
             </div>
 
