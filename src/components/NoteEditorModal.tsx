@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
@@ -40,6 +40,24 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
   const [body, setBody] = useState(note?.body ?? '');
   const [color, setColor] = useState(note?.color ?? COLORS[0].value);
   const [placeholder] = useState(() => PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  const updateBodyFades = useCallback(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+    el.dataset.fadeStart = String(el.scrollTop > 1);
+    el.dataset.fadeEnd = String(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+
+    updateBodyFades();
+    const observer = new ResizeObserver(updateBodyFades);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [body, updateBodyFades]);
 
   const handleDone = () => {
     const isEmpty = title.trim() === '' && body.trim() === '';
@@ -87,8 +105,10 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
         </div>
 
         <textarea
+          ref={bodyRef}
           autoFocus
           className={styles.body}
+          onScroll={updateBodyFades}
           placeholder={placeholder}
           value={body}
           onChange={(e) => setBody(e.target.value)}

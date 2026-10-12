@@ -90,8 +90,18 @@
   margin-bottom: 12px;
   scrollbar-width: none;
   padding: 10px 0;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  --fade-start: 0px;
+  --fade-end: 0px;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent 100%);
+
+  &[data-fade-start='true'] {
+    --fade-start: 20px;
+  }
+
+  &[data-fade-end='true'] {
+    --fade-end: 20px;
+  }
 
   &::-webkit-scrollbar {
     display: none;
