@@ -67,7 +67,10 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
     }
 
     if (note) {
-      updateNote(note.id, title, body, color);
+      const hasChanges = title !== note.title || body !== note.body || color !== note.color;
+      if (hasChanges) {
+        updateNote(note.id, title, body, color);
+      }
     } else {
       addNote(title, body, color);
     }
