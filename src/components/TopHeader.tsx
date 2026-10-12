@@ -1,14 +1,23 @@
 import { CloudAlert, Search } from 'lucide-react';
 import styles from './TopHeader.module.css';
 
+export type SyncStatus = 'syncing' | 'offline' | 'failed';
+
 interface TopHeaderProps {
   title: string;
   searchValue: string;
   onSearchChange: (value: string) => void;
   unsyncedCount: number;
+  syncStatus: SyncStatus;
 }
 
-export function TopHeader({ title, searchValue, onSearchChange, unsyncedCount }: TopHeaderProps) {
+const SYNC_LABELS: Record<SyncStatus, (count: number) => string> = {
+  syncing: (count) => `Syncing ${count}...`,
+  offline: (count) => `${count} unsynced`,
+  failed: (count) => `${count} failed to sync`,
+};
+
+export function TopHeader({ title, searchValue, onSearchChange, unsyncedCount, syncStatus }: TopHeaderProps) {
   return (
     <header className={styles.header}>
       <h1 className={styles.title}>{title}</h1>
@@ -25,7 +34,7 @@ export function TopHeader({ title, searchValue, onSearchChange, unsyncedCount }:
       {unsyncedCount > 0 && (
         <div className={styles.syncBadge}>
           <CloudAlert size={16} />
-          <span>{unsyncedCount} unsynced</span>
+          <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
         </div>
       )}
     </header>
