@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNotes } from '../hooks/useNotes';
 import { NoteCard } from './NoteCard';
 import { CircleCheck, Search } from 'lucide-react';
@@ -25,6 +26,9 @@ export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, o
   const { getNotes, deleteNote } = useNotes();
   const notes = getNotes(view === 'trash', search, tab, month ?? null);
   const hasSearch = search.trim().length > 0;
+
+  const [settledView, setSettledView] = useState<string | null>(null);
+  const settled = settledView === view;
 
   const emptyState =
     view === 'trash' ? (
@@ -70,6 +74,7 @@ export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, o
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
+          onAnimationComplete={() => setSettledView(view)}
         >
           <div className={styles.grid}>
             <AnimatePresence mode='popLayout'>
@@ -81,7 +86,11 @@ export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, o
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 12 }}
-                  transition={{ duration: 0.25, delay: index * 0.06 }}
+                  transition={{
+                    duration: 0.25,
+                    delay: settled ? 0 : Math.min(index, 8) * 0.05,
+                    layout: { duration: 0.25, ease: 'easeOut' },
+                  }}
                 >
                   <NoteCard
                     note={note}
