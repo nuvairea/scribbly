@@ -1,14 +1,15 @@
-import { CloudAlert, Search } from 'lucide-react';
+import { CloudAlert, Menu, Search } from 'lucide-react';
 import styles from './TopHeader.module.css';
 
 export type SyncStatus = 'syncing' | 'offline' | 'failed';
 
 interface TopHeaderProps {
-  title: string;
   searchValue: string;
   onSearchChange: (value: string) => void;
   unsyncedCount: number;
   syncStatus: SyncStatus;
+  menuOpen: boolean;
+  onMenuClick: () => void;
 }
 
 const SYNC_LABELS: Record<SyncStatus, (count: number) => string> = {
@@ -17,10 +18,28 @@ const SYNC_LABELS: Record<SyncStatus, (count: number) => string> = {
   failed: (count) => `${count} failed to sync`,
 };
 
-export function TopHeader({ title, searchValue, onSearchChange, unsyncedCount, syncStatus }: TopHeaderProps) {
+export function TopHeader({
+  searchValue,
+  onSearchChange,
+  unsyncedCount,
+  syncStatus,
+  menuOpen,
+  onMenuClick,
+}: TopHeaderProps) {
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>{title}</h1>
+      <div className={styles.left}>
+        <button
+          type='button'
+          className={styles.menuButton}
+          aria-label='Open menu'
+          aria-expanded={menuOpen}
+          onClick={onMenuClick}
+        >
+          <Menu size={24} />
+        </button>
+        <h1 className={styles.brand}>Scribbly</h1>
+      </div>
       <label className={styles.search}>
         <Search size={20} aria-hidden='true' />
         <input
