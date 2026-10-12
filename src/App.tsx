@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { TopHeader, type SyncStatus } from './components/TopHeader';
 import { Tabs } from './components/Tabs';
@@ -158,6 +159,39 @@ function Dashboard({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const updateContentFades = useCallback(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    el.dataset.fadeStart = String(el.scrollTop > 1);
+    el.dataset.fadeEnd = String(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    updateContentFades();
+    const resizeObserver = new ResizeObserver(() => {
+      updateContentFades();
+      Array.from(el.children).forEach((child) => resizeObserver.observe(child));
+    });
+    resizeObserver.observe(el);
+    Array.from(el.children).forEach((child) => resizeObserver.observe(child));
+
+    const mutationObserver = new MutationObserver(() => {
+      Array.from(el.children).forEach((child) => resizeObserver.observe(child));
+      updateContentFades();
+    });
+    mutationObserver.observe(el, { childList: true, subtree: true, characterData: true });
+
+    return () => {
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [updateContentFades]);
 
   const [selectedMonth, setSelectedMonth] = useState<MonthPosition>({
     month: new Date().getMonth(),
@@ -203,9 +237,19 @@ function Dashboard({
     };
   }, [hasPending]);
 
-  const showSyncBadge = user !== null && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
+  const showSyncBadge = user !== null
+    && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
   const badgeCount = showSyncBadge ? unsyncedCount : 0;
   const syncStatus: SyncStatus = failedCount > 0 ? 'failed' : !isOnline ? 'offline' : 'syncing';
+
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSidebarOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [sidebarOpen]);
 
   const openNewNote = () => {
     setEditingNote(null);
@@ -225,10 +269,20 @@ function Dashboard({
     <div className={styles.page}>
       <div className={styles.appFrame}>
         <Sidebar
+          open={sidebarOpen}
           view={view}
-          onViewChange={setView}
-          onAddNote={openNewNote}
-          onOpenSettings={() => setSettingsOpen(true)}
+          onViewChange={(nextView) => {
+            setView(nextView);
+            setSidebarOpen(false);
+          }}
+          onAddNote={() => {
+            openNewNote();
+            setSidebarOpen(false);
+          }}
+          onOpenSettings={() => {
+            setSettingsOpen(true);
+            setSidebarOpen(false);
+          }}
           userLabel={user?.firstName ?? 'Guest'}
           userPicture={user?.picture}
           notesCount={notesCount}
@@ -236,13 +290,14 @@ function Dashboard({
         />
         <main className={styles.main}>
           <TopHeader
-            title={view === 'notes' ? 'Notes' : 'Trash'}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
             unsyncedCount={badgeCount}
             syncStatus={syncStatus}
+            menuOpen={sidebarOpen}
+            onMenuClick={() => setSidebarOpen(true)}
           />
-          <div className={styles.content}>
+          <div ref={contentRef} className={styles.content} onScroll={updateContentFades}>
             {view === 'notes' && (
               <Tabs
                 tab={selectedTab}
@@ -261,11 +316,18 @@ function Dashboard({
               onOpenNote={openExistingNote}
               onViewChange={setView}
             />
-
-            <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
           </div>
+          <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
         </main>
       </div>
+      <div
+        className={`${styles.overlay} ${sidebarOpen ? styles.overlayActive : ''}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden='true'
+      />
+      <button type='button' className={styles.fab} aria-label='New scribble' onClick={openNewNote}>
+        <Plus size={24} />
+      </button>
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
