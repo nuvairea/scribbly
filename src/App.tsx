@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
-import { TopHeader } from './components/TopHeader';
+import { TopHeader, type SyncStatus } from './components/TopHeader';
 import { Tabs } from './components/Tabs';
 import { NotesGrid } from './components/NotesGrid';
 import { AuthModal } from './components/AuthModal';
@@ -34,12 +34,14 @@ function App() {
   const { setAuthContext } = useNotes();
 
   useEffect(() => {
+    if (authState === 'loading') return;
+
     if (user) {
       void setAuthContext(true, user.userId);
     } else {
       void setAuthContext(false, null);
     }
-  }, [user, setAuthContext]);
+  }, [user, authState, setAuthContext]);
 
   useEffect(() => {
     const cached = readCachedUser();
@@ -174,6 +176,36 @@ function Dashboard({
   const [editingNote, setEditingNote] = useState<Note | null>(null);
 
   const unsyncedCount = notes.filter((n) => n.pendingSync || n.syncError).length;
+  const failedCount = notes.filter((n) => n.syncError).length;
+
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine);
+  const [slowSync, setSlowSync] = useState(false);
+
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  }, []);
+
+  const hasPending = user !== null && unsyncedCount > 0;
+
+  useEffect(() => {
+    if (!hasPending) return;
+    const timer = setTimeout(() => setSlowSync(true), 3000);
+    return () => {
+      clearTimeout(timer);
+      setSlowSync(false);
+    };
+  }, [hasPending]);
+
+  const showSyncBadge = user !== null && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
+  const badgeCount = showSyncBadge ? unsyncedCount : 0;
+  const syncStatus: SyncStatus = failedCount > 0 ? 'failed' : !isOnline ? 'offline' : 'syncing';
 
   const openNewNote = () => {
     setEditingNote(null);
@@ -207,7 +239,8 @@ function Dashboard({
             title={view === 'notes' ? 'Notes' : 'Trash'}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
-            unsyncedCount={unsyncedCount}
+            unsyncedCount={badgeCount}
+            syncStatus={syncStatus}
           />
           <div className={styles.content}>
             {view === 'notes' && (
