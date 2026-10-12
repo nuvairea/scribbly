@@ -131,7 +131,9 @@ export class NotesManager {
       );
 
     if (!result.ok) {
-      this.markSyncFailure(note, op);
+      if (result.status !== 0) {
+        this.markSyncFailure(note, op);
+      }
       this.save();
       return;
     }
