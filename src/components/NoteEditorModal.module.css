@@ -22,6 +22,20 @@
   padding: 22px;
 }
 
+@media (max-width: 480px) {
+  .modal {
+    width: 100%;
+    max-height: min(620px, 92vh);
+    padding: 28px 20px calc(20px + env(safe-area-inset-bottom));
+    border-radius: 28px 28px 0 0;
+    transform: translateY(100%);
+  }
+
+  .overlay {
+    align-items: flex-end;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -75,7 +89,7 @@
   background: none;
   margin-bottom: 12px;
   scrollbar-width: none;
-  padding-top: 8px;
+  padding: 10px 0;
   mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
 
@@ -91,8 +105,8 @@
 }
 
 .swatch {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid transparent;
   transition: outline 0.35s;
