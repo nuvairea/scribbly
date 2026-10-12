@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 1000;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   background: var(--color-overlay);
   -webkit-backdrop-filter: blur(4px);
@@ -15,18 +15,16 @@
   --sm-danger-border: color-mix(in srgb, var(--color-danger) 40%, transparent);
   --sm-danger-bg: color-mix(in srgb, var(--color-danger) 8%, transparent);
 
-  box-sizing: border-box;
-  width: 100vw;
+  width: min(1024px, calc(100vw - 35px));
   max-height: min(600px, calc(100vh - 35px));
   height: auto;
   max-width: none;
+  padding: 15px 24px;
+  border-radius: var(--radius-md);
   overflow-y: auto;
   display: block;
-  padding: 15px 24px;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
   background: var(--color-modal);
   color: var(--color-text-primary);
-  box-shadow: 0 -8px 32px var(--color-shadow);
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -48,7 +46,7 @@
 
 .title {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -90,13 +88,13 @@
 
 .rowLabel {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .rowHint {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.35;
   color: var(--color-text-secondary);
 }
@@ -159,6 +157,7 @@
   border-color: var(--sm-danger-border);
   background: var(--sm-danger-bg);
   color: var(--color-danger);
+  transition: all 0.15s;
 
   &:hover {
     border-color: var(--color-danger);
@@ -274,17 +273,4 @@
 
 .confirmActions .actionButton {
   flex: 1;
-}
-
-@media (min-width: 640px) {
-  .overlay {
-    align-items: center;
-  }
-
-  .modal {
-    max-height: 85vh;
-    max-height: 85dvh;
-    width: min(1024px, calc(100vw - 35px));
-    border-radius: var(--radius-md);
-  }
 }
