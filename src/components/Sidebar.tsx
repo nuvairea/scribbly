@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
+  open: boolean;
   view: 'notes' | 'trash';
   onViewChange: (view: 'notes' | 'trash') => void;
   onAddNote: () => void;
@@ -15,6 +16,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({
+  open,
   view,
   onViewChange,
   onAddNote,
@@ -28,7 +30,7 @@ export function Sidebar({
   const [imgFailed, setImgFailed] = useState(false);
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${open ? styles.open : ''}`}>
       <h1 className={styles.brand}>Scribbly</h1>
 
       <button className={styles.addIcon} onClick={onAddNote}>
