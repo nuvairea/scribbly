@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { DateNav } from './DateNav';
 import type { MonthPosition } from '../lib/NoteQueries';
@@ -24,14 +25,43 @@ export function Tabs({
   onMonthChange,
   monthBounds,
 }: TabsProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const updateFades = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.dataset.fadeStart = String(el.scrollLeft > 1);
+    el.dataset.fadeEnd = String(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(updateFades);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [updateFades]);
+
+  useEffect(() => {
+    scrollRef.current
+      ?.querySelector<HTMLElement>('[aria-current="true"]')
+      ?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, [tab]);
+
   return (
     <div className={styles.tabsRow}>
-      <div className={styles.tabs}>
+      <motion.div
+        layoutScroll
+        ref={scrollRef}
+        className={styles.tabs}
+        onScroll={updateFades}
+      >
         {tabs.map(({ id, label }) => (
           <button
             key={id}
             type='button'
             className={`${styles.tab} ${tab === id ? styles.tabActive : ''}`}
+            aria-current={tab === id ? 'true' : undefined}
             onClick={() => onTabChange(id)}
           >
             {label}
@@ -43,9 +73,11 @@ export function Tabs({
             )}
           </button>
         ))}
-      </div>
+      </motion.div>
       {tab === 'month' && (
-        <DateNav month={month} onChange={onMonthChange} bounds={monthBounds} />
+        <div className={styles.dateNav}>
+          <DateNav month={month} onChange={onMonthChange} bounds={monthBounds} />
+        </div>
       )}
     </div>
   );

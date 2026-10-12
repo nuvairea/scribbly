@@ -2,20 +2,55 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin: -18px 0 18px;
 }
 
 .tabs {
+  --fade-start: 0px;
+  --fade-end: 0px;
   display: flex;
   gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent 100%
+  );
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &[data-fade-start='true'] {
+    --fade-start: 28px;
+  }
+
+  &[data-fade-end='true'] {
+    --fade-end: 28px;
+  }
 }
 
 .tab {
+  --tab-pad: 12px;
   position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 8px var(--tab-pad);
   font-size: 14px;
   font-family: var(--font-family-base);
   color: var(--color-text-secondary);
@@ -29,15 +64,29 @@
 
 .underline {
   position: absolute;
-  left: 12px;
-  right: 12px;
+  left: var(--tab-pad);
+  right: var(--tab-pad);
   bottom: 0;
   height: 2px;
   border-radius: var(--radius-sm);
   background: var(--color-text-primary);
 }
 
+.dateNav {
+  flex-shrink: 0;
+}
+
 .monthLabel {
   font-size: 13px;
   color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .tabs {
+    gap: 0;
+  }
+
+  .tab {
+    --tab-pad: 8px;
+  }
 }
