@@ -4,6 +4,7 @@ import styles from './TopHeader.module.css';
 export type SyncStatus = 'syncing' | 'offline' | 'failed';
 
 interface TopHeaderProps {
+  title: string;
   searchValue: string;
   onSearchChange: (value: string) => void;
   unsyncedCount: number;
@@ -19,6 +20,7 @@ const SYNC_LABELS: Record<SyncStatus, (count: number) => string> = {
 };
 
 export function TopHeader({
+  title,
   searchValue,
   onSearchChange,
   unsyncedCount,
@@ -39,6 +41,7 @@ export function TopHeader({
           <Menu size={24} />
         </button>
         <h1 className={styles.brand}>Scribbly</h1>
+        <h2 className={styles.title}>{title}</h2>
       </div>
       <label className={styles.search}>
         <Search size={20} aria-hidden='true' />
