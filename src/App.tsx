@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { TopHeader, type SyncStatus } from './components/TopHeader';
@@ -8,6 +8,7 @@ import { AuthModal } from './components/AuthModal';
 import { SplashScreen } from './components/SplashScreen';
 import styles from './App.module.css';
 import { useNotes } from './hooks/useNotes';
+import { useScrollFade } from './hooks/useScrollFade';
 import { getMonthBounds, type MonthPosition } from './lib/NoteQueries';
 import { checkSession, deleteAccount, loginWithGoogle, logout, type User } from './lib/auth';
 import { NoteEditorModal } from './components/NoteEditorModal';
@@ -160,38 +161,7 @@ function Dashboard({
   const [selectedTab, setSelectedTab] = useState('all');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  const updateContentFades = useCallback(() => {
-    const el = contentRef.current;
-    if (!el) return;
-    el.dataset.fadeStart = String(el.scrollTop > 1);
-    el.dataset.fadeEnd = String(el.scrollTop + el.clientHeight < el.scrollHeight - 1);
-  }, []);
-
-  useEffect(() => {
-    const el = contentRef.current;
-    if (!el) return;
-
-    updateContentFades();
-    const resizeObserver = new ResizeObserver(() => {
-      updateContentFades();
-      Array.from(el.children).forEach((child) => resizeObserver.observe(child));
-    });
-    resizeObserver.observe(el);
-    Array.from(el.children).forEach((child) => resizeObserver.observe(child));
-
-    const mutationObserver = new MutationObserver(() => {
-      Array.from(el.children).forEach((child) => resizeObserver.observe(child));
-      updateContentFades();
-    });
-    mutationObserver.observe(el, { childList: true, subtree: true, characterData: true });
-
-    return () => {
-      resizeObserver.disconnect();
-      mutationObserver.disconnect();
-    };
-  }, [updateContentFades]);
+  const contentRef = useScrollFade<HTMLDivElement>('y', { observeContent: true });
 
   const [selectedMonth, setSelectedMonth] = useState<MonthPosition>({
     month: new Date().getMonth(),
@@ -297,7 +267,7 @@ function Dashboard({
             menuOpen={sidebarOpen}
             onMenuClick={() => setSidebarOpen(true)}
           />
-          <div ref={contentRef} className={styles.content} onScroll={updateContentFades}>
+          <div ref={contentRef} className={styles.content}>
             {view === 'notes' && (
               <Tabs
                 tab={selectedTab}

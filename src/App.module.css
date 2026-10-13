@@ -82,7 +82,7 @@
   background: var(--color-text-primary);
   color: var(--color-bg-surface);
   cursor: pointer;
-  box-shadow: 0 6px 18px rgb(0 0 0 / 35%);
+  box-shadow: 0 8px 20px var(--color-shadow);
   transition: transform 0.2s;
   animation: fab-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -127,7 +127,7 @@
     position: fixed;
     inset: 0;
     z-index: 90;
-    background: rgb(0 0 0 / 50%);
+    background: var(--color-overlay);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     opacity: 0;
