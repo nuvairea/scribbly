@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DateNav } from './DateNav';
 import type { MonthPosition } from '../lib/NoteQueries';
+import { useScrollFade } from '../hooks/useScrollFade';
 import styles from './Tabs.module.css';
 interface TabsProps {
   tab: string;
@@ -25,28 +26,13 @@ export function Tabs({
   onMonthChange,
   monthBounds,
 }: TabsProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const updateFades = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.dataset.fadeStart = String(el.scrollLeft > 1);
-    el.dataset.fadeEnd = String(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver(updateFades);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [updateFades]);
+  const scrollRef = useScrollFade<HTMLDivElement>('x');
 
   useEffect(() => {
     scrollRef.current
       ?.querySelector<HTMLElement>('[aria-current="true"]')
       ?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }, [tab]);
+  }, [tab, scrollRef]);
 
   return (
     <div className={styles.tabsRow}>
@@ -54,7 +40,6 @@ export function Tabs({
         layoutScroll
         ref={scrollRef}
         className={styles.tabs}
-        onScroll={updateFades}
       >
         {tabs.map(({ id, label }) => (
           <button
