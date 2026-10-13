@@ -16,6 +16,14 @@
   gap: 12px;
 }
 
+.title {
+  color: var(--color-text-primary);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 .brand {
   display: none;
   font-family: 'Dancing Script', cursive;
@@ -77,13 +85,7 @@
 
 @media (max-width: 1100px) {
   .header {
-    background-color: var(--color-bg-mobile);
     padding-top: env(safe-area-inset-top, 0px);
-  }
-
-  .search {
-    background-color: var(--color-bg-search-m);
-    border-radius: var(--radius-sm);
   }
 
   .menuButton {
@@ -92,6 +94,11 @@
 
   .brand {
     display: block;
+    font-size: 28px;
+  }
+
+  .title {
+    display: none;
   }
 }
 
