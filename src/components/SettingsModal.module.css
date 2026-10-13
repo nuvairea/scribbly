@@ -6,7 +6,6 @@
   align-items: center;
   justify-content: center;
   background: var(--color-overlay);
-  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   will-change: opacity;
 }
