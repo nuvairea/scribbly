@@ -104,6 +104,7 @@
 
 @media (max-width: 640px) {
   .header {
+    background-color: var(--color-bg-mobile);
     flex-wrap: wrap;
     min-height: 0;
     gap: 12px 16px;
@@ -119,6 +120,7 @@
   }
 
   .search {
+    background-color: var(--color-bg-search-m);
     position: static;
     order: 3;
     box-sizing: border-box;
