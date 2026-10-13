@@ -121,6 +121,7 @@
 
   .search {
     background-color: var(--color-bg-search-m);
+    border-radius: var(--radius-sm);
     position: static;
     order: 3;
     box-sizing: border-box;
