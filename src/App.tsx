@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
 import { TopHeader, type SyncStatus } from './components/TopHeader';
@@ -19,7 +20,17 @@ type AuthState = 'loading' | 'auth' | 'notes';
 
 const USER_KEY = 'scribbly:user';
 const GUEST_KEY = 'scribbly:guest';
+const SPLASH_MIN_MS = 600;
 const SPLASH_MAX_MS = 2000;
+
+const FADE = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.2 },
+};
+
+const SCREEN_STYLE: CSSProperties = { position: 'fixed', inset: 0, overflowY: 'auto' };
 
 function readCachedUser(): User | null {
   try {
@@ -46,8 +57,19 @@ function App() {
   }, [user, authState, setAuthContext]);
 
   useEffect(() => {
+    const startedAt = Date.now();
     const cached = readCachedUser();
     const isGuest = localStorage.getItem(GUEST_KEY) === '1';
+    const minimumTimers: ReturnType<typeof setTimeout>[] = [];
+
+    const afterMinimum = (apply: () => void) => {
+      const wait = Math.max(0, SPLASH_MIN_MS - (Date.now() - startedAt));
+      if (wait === 0) {
+        apply();
+      } else {
+        minimumTimers.push(setTimeout(apply, wait));
+      }
+    };
 
     const applyAuthFallback = () => {
       if (cached) {
@@ -64,24 +86,29 @@ function App() {
     checkSession()
       .then((result) => {
         clearTimeout(timer);
-        if (result.ok) {
-          localStorage.setItem(USER_KEY, JSON.stringify(result.data));
-          localStorage.removeItem(GUEST_KEY);
-          setUser(result.data);
-          setAuthState('notes');
-        } else if (result.status === 401) {
-          localStorage.removeItem(USER_KEY);
-          setAuthState(isGuest ? 'notes' : 'auth');
-        } else {
-          applyAuthFallback();
-        }
+        afterMinimum(() => {
+          if (result.ok) {
+            localStorage.setItem(USER_KEY, JSON.stringify(result.data));
+            localStorage.removeItem(GUEST_KEY);
+            setUser(result.data);
+            setAuthState('notes');
+          } else if (result.status === 401) {
+            localStorage.removeItem(USER_KEY);
+            setAuthState(isGuest ? 'notes' : 'auth');
+          } else {
+            applyAuthFallback();
+          }
+        });
       })
       .catch(() => {
         clearTimeout(timer);
-        applyAuthFallback();
+        afterMinimum(applyAuthFallback);
       });
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      minimumTimers.forEach(clearTimeout);
+    };
   }, []);
 
   const handleGoogle = async (code: string) => {
@@ -103,12 +130,6 @@ function App() {
     setUser(null);
     setAuthState('notes');
   };
-
-  if (authState === 'loading') return <SplashScreen />;
-
-  if (authState === 'auth') {
-    return <AuthModal onGoogle={handleGoogle} onGuest={handleGuest} />;
-  }
 
   const handleLogout = async () => {
     const result = await logout();
@@ -135,12 +156,27 @@ function App() {
   };
 
   return (
-    <Dashboard
-      user={user}
-      onLogout={handleLogout}
-      onDeleteAccount={handleDeleteAccount}
-      onLoginPrompt={() => setAuthState('auth')}
-    />
+    <AnimatePresence mode='wait'>
+      {authState === 'loading' && (
+        <motion.div key='splash' style={SCREEN_STYLE} {...FADE}>
+          <SplashScreen />
+        </motion.div>
+      )}
+      {authState === 'auth' && (
+        <motion.div key='auth' style={SCREEN_STYLE} {...FADE}>
+          <AuthModal onGoogle={handleGoogle} onGuest={handleGuest} />
+        </motion.div>
+      )}
+      {authState === 'notes' && (
+        <Dashboard
+          key='dashboard'
+          user={user}
+          onLogout={handleLogout}
+          onDeleteAccount={handleDeleteAccount}
+          onLoginPrompt={() => setAuthState('auth')}
+        />
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -236,7 +272,7 @@ function Dashboard({
   };
 
   return (
-    <div className={styles.page}>
+    <motion.div className={styles.page} {...FADE}>
       <div className={styles.appFrame}>
         <Sidebar
           open={sidebarOpen}
@@ -260,6 +296,7 @@ function Dashboard({
         />
         <main className={styles.main}>
           <TopHeader
+            title={view === 'notes' ? 'Notes' : 'Trash'}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
             unsyncedCount={badgeCount}
@@ -307,7 +344,7 @@ function Dashboard({
         onDeleteAccount={onDeleteAccount}
         onLoginPrompt={onLoginPrompt}
       />
-    </div>
+    </motion.div>
   );
 }
 
