@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNotes } from '../hooks/useNotes';
+import { useToast } from '../hooks/useToast';
 import { NoteCard } from './NoteCard';
 import { CircleCheck, Search } from 'lucide-react';
 import type { Note } from '../types/note';
@@ -24,6 +25,7 @@ const periodLabels: Record<string, string> = {
 
 export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, onViewChange }: NotesGridProps) {
   const { getNotes, deleteNote } = useNotes();
+  const { showToast } = useToast();
   const notes = getNotes(view === 'trash', search, tab, month ?? null);
   const hasSearch = search.trim().length > 0;
 
@@ -96,7 +98,10 @@ export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, o
                     note={note}
                     view={view}
                     onOpen={() => onOpenNote(note)}
-                    onToggleDelete={() => deleteNote(note.id)}
+                    onToggleDelete={() => {
+                      void deleteNote(note.id);
+                      showToast(view === 'trash' ? 'Note restored' : 'Note moved to trash');
+                    }}
                   />
                 </motion.div>
               ))}

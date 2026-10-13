@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, Download, Trash, Mail, LogOut, UserX } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
+import { useToast } from '../hooks/useToast';
 import styles from './SettingsModal.module.css';
 
 type Theme = 'system' | 'light' | 'dark';
@@ -37,6 +38,7 @@ export function SettingsModal({
   onLoginPrompt,
 }: SettingsModalProps) {
   const { notes, emptyTrash } = useNotes();
+  const { showToast } = useToast();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const canDelete = confirmText.trim() === 'DELETE';
@@ -70,6 +72,10 @@ export function SettingsModal({
   };
 
   const handleExport = () => {
+    if (notes.length === 0) {
+      showToast('No notes to export');
+      return;
+    }
     const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -77,10 +83,16 @@ export function SettingsModal({
     link.download = `scribbly-notes-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
+    showToast('Notes exported');
   };
 
   const handleClearTrash = () => {
+    if (!notes.some((note) => note.deleted)) {
+      showToast('Trash is already empty');
+      return;
+    }
     emptyTrash();
+    showToast('Trash emptied');
   };
 
   return (

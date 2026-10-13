@@ -10,6 +10,8 @@ import { SplashScreen } from './components/SplashScreen';
 import styles from './App.module.css';
 import { useNotes } from './hooks/useNotes';
 import { useScrollFade } from './hooks/useScrollFade';
+import { useToast } from './hooks/useToast';
+import { ToastProvider } from './context/ToastProvider';
 import { getMonthBounds, type MonthPosition } from './lib/NoteQueries';
 import { checkSession, deleteAccount, loginWithGoogle, logout, type User } from './lib/auth';
 import { NoteEditorModal } from './components/NoteEditorModal';
@@ -41,10 +43,11 @@ function readCachedUser(): User | null {
   }
 }
 
-function App() {
+function AppContent() {
   const [authState, setAuthState] = useState<AuthState>('loading');
   const [user, setUser] = useState<User | null>(null);
   const { setAuthContext } = useNotes();
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (authState === 'loading') return;
@@ -119,6 +122,7 @@ function App() {
         localStorage.removeItem(GUEST_KEY);
         setUser(result.data);
         setAuthState('notes');
+        showToast('Signed in');
       }
     } catch {
       setAuthState('auth');
@@ -141,18 +145,21 @@ function App() {
     localStorage.removeItem(GUEST_KEY);
     setUser(null);
     setAuthState('auth');
+    showToast('Come back soon');
   };
 
   const handleDeleteAccount = async () => {
     const result = await deleteAccount();
     if (!result.ok) {
       console.error('Account deletion failed:', result.data.error);
+      showToast('Failed to delete account');
       return;
     }
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(GUEST_KEY);
     setUser(null);
     setAuthState('auth');
+    showToast('Account deleted');
   };
 
   return (
@@ -177,6 +184,14 @@ function App() {
         />
       )}
     </AnimatePresence>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 
@@ -243,7 +258,8 @@ function Dashboard({
     };
   }, [hasPending]);
 
-  const showSyncBadge = user !== null && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
+  const showSyncBadge = user !== null
+    && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
   const badgeCount = showSyncBadge ? unsyncedCount : 0;
   const syncStatus: SyncStatus = failedCount > 0 ? 'failed' : !isOnline ? 'offline' : 'syncing';
 
