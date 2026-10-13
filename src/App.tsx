@@ -243,8 +243,7 @@ function Dashboard({
     };
   }, [hasPending]);
 
-  const showSyncBadge = user !== null
-    && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
+  const showSyncBadge = user !== null && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
   const badgeCount = showSyncBadge ? unsyncedCount : 0;
   const syncStatus: SyncStatus = failedCount > 0 ? 'failed' : !isOnline ? 'offline' : 'syncing';
 
@@ -304,25 +303,27 @@ function Dashboard({
             menuOpen={sidebarOpen}
             onMenuClick={() => setSidebarOpen(true)}
           />
-          <div ref={contentRef} className={styles.content}>
-            {view === 'notes' && (
-              <Tabs
-                tab={selectedTab}
-                onTabChange={setSelectedTab}
-                month={selectedMonth}
-                onMonthChange={setSelectedMonth}
-                monthBounds={monthBounds}
-              />
-            )}
+          <div className={styles.contentFrame}>
+            <div ref={contentRef} className={styles.content}>
+              {view === 'notes' && (
+                <Tabs
+                  tab={selectedTab}
+                  onTabChange={setSelectedTab}
+                  month={selectedMonth}
+                  onMonthChange={setSelectedMonth}
+                  monthBounds={monthBounds}
+                />
+              )}
 
-            <NotesGrid
-              view={view}
-              search={searchQuery}
-              tab={selectedTab}
-              month={selectedMonth}
-              onOpenNote={openExistingNote}
-              onViewChange={setView}
-            />
+              <NotesGrid
+                view={view}
+                search={searchQuery}
+                tab={selectedTab}
+                month={selectedMonth}
+                onOpenNote={openExistingNote}
+                onViewChange={setView}
+              />
+            </div>
           </div>
           <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
         </main>
