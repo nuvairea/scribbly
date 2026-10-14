@@ -26,14 +26,14 @@ Account and data management is available from Settings, including exporting note
 
 ## Built with
 
-- React + TypeScript
-- Vite
-- Motion
-- CSS Modules
-
-## Backend
-
-The API is maintained in a separate Node.js and Express service. See the [Scribbly Server repository](https://github.com/nuvairea/scribbly-server).
+- **Frontend:** React, TypeScript, Vite
+- **Styling:** CSS Modules
+- **Animations:** Motion
+- **Icons:** Lucide
+- **Auth:** Google OAuth
+- **PWA:** installable, works offline
+- **Backend:** [scribbly-server](https://github.com/nuvairea/scribbly-server) (Node.js, Express, MongoDB)
+- **Deployment:** Render, with GitHub Actions
 
 ## Run locally
 
@@ -44,7 +44,7 @@ npm install
 npm run dev
 ```
 
-Guest mode works without the backend. For sync, run the server above and set `VITE_API_URL` in a `.env` file.
+Guest mode works without the backend. For login and sync, run [scribbly-server](https://github.com/nuvairea/scribbly-server) locally (setup is in its README), then add `VITE_API_URL=<your server's URL>` to a `.env` file in the project root and restart the dev server.
 
 ## License
 
