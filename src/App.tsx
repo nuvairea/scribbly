@@ -50,6 +50,16 @@ function AppContent() {
   const { showToast } = useToast();
 
   useEffect(() => {
+    if (!import.meta.env.PROD) return;
+
+    const previousBuildId = localStorage.getItem('scribbly_build_id');
+    if (previousBuildId && previousBuildId !== __BUILD_ID__) {
+      showToast('App updated');
+    }
+    localStorage.setItem('scribbly_build_id', __BUILD_ID__);
+  }, [showToast]);
+
+  useEffect(() => {
     if (authState === 'loading') return;
 
     if (user) {
