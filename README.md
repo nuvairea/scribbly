@@ -14,6 +14,10 @@
 
 Write freely, stay in flow, and keep your thoughts close, even without a connection.
 
+<p align="center">
+  <img src="./screenshot/scribbly.png" alt="Scribbly app screenshot" width="960" />
+</p>
+
 ## Features
 
 Scribbly lets you create, edit, and color-tag notes, search across your notes, and filter them by today, this week, or this month. Deleted notes are moved to trash, where they can be recovered or permanently removed.
@@ -26,7 +30,7 @@ Account and data management is available from Settings, including exporting note
 
 ## Built with
 
-- **Frontend:** React, TypeScript, Vite
+- **Frontend:** React + TypeScript and Vite
 - **Styling:** CSS Modules
 - **Animations:** Motion
 - **Icons:** Lucide
