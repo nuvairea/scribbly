@@ -160,5 +160,13 @@
 @media (max-width: 640px) {
   .content {
     padding: 20px 20px calc(96px + env(safe-area-inset-bottom, 0px));
+
+    &[data-fade-start='true'] {
+      --fade-start: 15px;
+    }
+
+    &[data-fade-end='true'] {
+      --fade-end: 15px;
+    }
   }
 }
