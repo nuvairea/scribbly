@@ -83,6 +83,10 @@
   color: var(--color-danger);
 }
 
+.syncing {
+  color: #2e8b57;
+}
+
 @media (max-width: 1100px) {
   .header {
     padding-top: env(safe-area-inset-top, 0px);
@@ -119,7 +123,7 @@
   }
 
   .search {
-    background-color: var(--color-bg-search-m);
+    background-color: var(--color-search-mobile);
     border-radius: var(--radius-sm);
     position: static;
     order: 3;
