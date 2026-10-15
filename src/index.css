@@ -49,11 +49,11 @@ button {
   --color-bg-selected: #f0f0f0;
   --color-bg-search: #f4f5f8;
   --color-border: #dddddd;
-  --color-modal: #ffffff;
+  --color-bg-modal: #ffffff;
   --color-text-primary: #111111;
   --color-text-secondary: #a0a4ab;
   --color-bg-mobile: #ffffff;
-  --color-bg-search-m: #f4f5f8;
+  --color-search-mobile: #f4f5f8;
 
   --color-avatar-bg: #fff0d3;
   --color-avatar-text: #9d6b2b;
@@ -82,10 +82,10 @@ button {
     --color-bg-muted: #000000;
     --color-bg-selected: #1e1e1e;
     --color-bg-search: #0f0f0f;
-    --color-modal: #242424;
+    --color-bg-modal: #242424;
     --color-bg-mobile: #000000;
     --color-border: #2c2c2c;
-    --color-bg-search-m: #1e1e1e;
+    --color-search-mobile: #1e1e1e;
 
     --color-text-primary: #f0f2f5;
     --color-text-secondary: #8a8e95;
@@ -109,11 +109,11 @@ button {
   --color-bg-selected: #f0f0f0;
   --color-bg-search: #f4f5f8;
   --color-border: #dddddd;
-  --color-modal: #ffffff;
+  --color-bg-modal: #ffffff;
   --color-text-primary: #111111;
   --color-text-secondary: #a0a4ab;
   --color-bg-mobile: #ffffff;
-  --color-bg-search-m: #f4f5f8;
+  --color-search-mobile: #f4f5f8;
 
   --color-avatar-bg: #fff0d3;
   --color-avatar-text: #9d6b2b;
@@ -132,10 +132,10 @@ button {
   --color-bg-muted: #000000;
   --color-bg-selected: #1e1e1e;
   --color-bg-search: #0f0f0f;
-  --color-modal: #242424;
+  --color-bg-modal: #242424;
   --color-border: #2c2c2c;
   --color-bg-mobile: #000000;
-  --color-bg-search-m: #1e1e1e;
+  --color-search-mobile: #1e1e1e;
 
   --color-text-primary: #f0f2f5;
   --color-text-secondary: #8a8e95;
