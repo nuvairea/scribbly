@@ -54,7 +54,7 @@ export function TopHeader({
         />
       </label>
       {unsyncedCount > 0 && (
-        <div className={styles.syncBadge}>
+        <div className={`${styles.syncBadge} ${syncStatus === 'syncing' ? styles.syncing : ''}`}>
           <CloudAlert size={16} />
           <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
         </div>
