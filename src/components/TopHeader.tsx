@@ -1,22 +1,35 @@
-import { CloudAlert, Menu, Search } from 'lucide-react';
+import { CloudAlert, CloudOff, CloudSync, CloudCheck, Menu, Search, type LucideIcon } from 'lucide-react';
 import styles from './TopHeader.module.css';
 
-export type SyncStatus = 'syncing' | 'offline' | 'failed';
+export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'failed';
 
 interface TopHeaderProps {
   title: string;
   searchValue: string;
   onSearchChange: (value: string) => void;
   unsyncedCount: number;
-  syncStatus: SyncStatus;
+  syncStatus: SyncStatus | null;
   menuOpen: boolean;
   onMenuClick: () => void;
 }
 
 const SYNC_LABELS: Record<SyncStatus, (count: number) => string> = {
+  synced: () => 'All synced',
   syncing: (count) => `Syncing ${count}...`,
   offline: (count) => `${count} unsynced`,
   failed: (count) => `${count} failed to sync`,
+};
+
+const SYNC_ICONS: Record<SyncStatus, LucideIcon> = {
+  synced: CloudCheck,
+  syncing: CloudSync,
+  offline: CloudOff,
+  failed: CloudAlert,
+};
+
+const SYNC_CLASSES: Partial<Record<SyncStatus, string>> = {
+  synced: styles.synced,
+  syncing: styles.syncing,
 };
 
 export function TopHeader({
@@ -28,6 +41,8 @@ export function TopHeader({
   menuOpen,
   onMenuClick,
 }: TopHeaderProps) {
+  const SyncIcon = syncStatus ? SYNC_ICONS[syncStatus] : null;
+
   return (
     <header className={styles.header}>
       <div className={styles.left}>
@@ -53,9 +68,9 @@ export function TopHeader({
           onChange={(event) => onSearchChange(event.target.value)}
         />
       </label>
-      {unsyncedCount > 0 && (
-        <div className={`${styles.syncBadge} ${syncStatus === 'syncing' ? styles.syncing : ''}`}>
-          <CloudAlert size={16} />
+      {syncStatus && SyncIcon && (
+        <div role='status' className={`${styles.syncBadge} ${SYNC_CLASSES[syncStatus] ?? ''}`}>
+          <SyncIcon size={16} />
           <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
         </div>
       )}
