@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState, useRef, type CSSProperties } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { Sidebar } from './components/Sidebar';
@@ -268,10 +268,32 @@ function Dashboard({
     };
   }, [hasPending]);
 
-  const showSyncBadge = user !== null
-    && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
-  const badgeCount = showSyncBadge ? unsyncedCount : 0;
-  const syncStatus: SyncStatus = failedCount > 0 ? 'failed' : !isOnline ? 'offline' : 'syncing';
+  const showSyncBadge = user !== null && (failedCount > 0 || (unsyncedCount > 0 && (!isOnline || slowSync)));
+
+  const [showSynced, setShowSynced] = useState(false);
+  const badgeWasVisible = useRef(false);
+
+  useEffect(() => {
+    if (showSyncBadge) {
+      badgeWasVisible.current = true;
+      return;
+    }
+    if (!badgeWasVisible.current) return;
+    badgeWasVisible.current = false;
+    setShowSynced(true);
+    const timer = setTimeout(() => setShowSynced(false), 5000);
+    return () => clearTimeout(timer);
+  }, [showSyncBadge]);
+
+  const syncStatus: SyncStatus | null = showSyncBadge
+    ? failedCount > 0
+      ? 'failed'
+      : !isOnline
+        ? 'offline'
+        : 'syncing'
+    : showSynced
+      ? 'synced'
+      : null;
 
   useEffect(() => {
     if (!sidebarOpen) return;
@@ -324,7 +346,7 @@ function Dashboard({
             title={view === 'notes' ? 'Notes' : 'Trash'}
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
-            unsyncedCount={badgeCount}
+            unsyncedCount={unsyncedCount}
             syncStatus={syncStatus}
             menuOpen={sidebarOpen}
             onMenuClick={() => setSidebarOpen(true)}
