@@ -3,6 +3,8 @@ import styles from './AuthModal.module.css';
 import { useGoogleLogin } from '@react-oauth/google';
 import GoogleIcon from '../assets/google-icon.png';
 import { Spinner } from './Spinner';
+import { useToast } from '../hooks/useToast';
+import { isOffline, OFFLINE_ERROR } from '../lib/api';
 
 type Props = {
   onGuest: () => void;
@@ -10,7 +12,9 @@ type Props = {
 };
 
 export function AuthModal({ onGuest, onGoogle }: Props) {
+  const { showToast } = useToast();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
   const login = useGoogleLogin({
     flow: 'auth-code',
     scope: 'openid email profile',
@@ -23,11 +27,11 @@ export function AuthModal({ onGuest, onGoogle }: Props) {
     },
     onError: () => {
       setIsGoogleLoading(false);
-      console.error('Google sign-in failed');
+      showToast('Google sign-in failed');
     },
     onNonOAuthError: () => {
       setIsGoogleLoading(false);
-      console.error('Google sign-in could not be completed');
+      showToast('Google sign-in could not be completed');
     },
   });
 
@@ -41,6 +45,10 @@ export function AuthModal({ onGuest, onGoogle }: Props) {
         <button
           className={styles.googleBtn}
           onClick={() => {
+            if (isOffline()) {
+              showToast(OFFLINE_ERROR);
+              return;
+            }
             setIsGoogleLoading(true);
             login();
           }}
