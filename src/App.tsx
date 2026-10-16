@@ -54,7 +54,7 @@ function AppContent() {
 
     const previousBuildId = localStorage.getItem('scribbly_build_id');
     if (previousBuildId && previousBuildId !== __BUILD_ID__) {
-      showToast('App updated');
+      showToast('Scribbly was updated');
     }
     localStorage.setItem('scribbly_build_id', __BUILD_ID__);
   }, [showToast]);
