@@ -123,7 +123,7 @@
 .themeOptionActive {
   background: var(--color-card-action-bg);
   color: var(--color-card-action-color);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .actionButton {
