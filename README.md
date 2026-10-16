@@ -30,6 +30,10 @@ Account and data management is available from Settings, including exporting note
 
 ## How sync works
 
+|                                             Offline                                             |                                            Syncing                                             |                                          Synced                                           |
+| :---------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------: |
+| <img src="./screenshots/sync-offline.jpg" alt="Note saved locally while offline" width="240" /> | <img src="./screenshots/sync-syncing.jpg" alt="Note syncing after reconnecting" width="240" /> | <img src="./screenshots/sync-synced.jpg" alt="Note synced with the server" width="240" /> |
+
 Scribbly is local first. Every change is written to local storage right away, so the UI never waits on the network.
 
 When you're signed in, each change is also sent to the server in the background. Until the server confirms it, the note is marked as pending. If a request fails, it's retried, and after 5 failed attempts the note is flagged as a sync error.
@@ -64,6 +68,7 @@ Guest mode works without the backend. For login and sync, run [scribbly-server](
 VITE_API_URL=Your server URL
 VITE_GOOGLE_CLIENT_ID=Your Google OAuth client ID
 ```
+
 `VITE_API_URL` is for local development only. In production the app calls `/api`, which is rewritten to the server so auth cookies stay first party. `VITE_GOOGLE_CLIENT_ID` is needed in both.
 
 ## License
