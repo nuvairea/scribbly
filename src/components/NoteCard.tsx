@@ -37,7 +37,7 @@ export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) 
               setMenuOpen((open) => !open);
             }}
           >
-            <MoreHorizontal size={16} />
+            <MoreHorizontal size={21} />
           </button>
 
           <AnimatePresence>
