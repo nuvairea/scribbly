@@ -83,7 +83,8 @@
   color: var(--color-danger);
 }
 
-.syncing {
+.syncing,
+.synced {
   color: #2e8b57;
 }
 
