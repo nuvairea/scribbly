@@ -28,7 +28,7 @@
   border: none;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 40px;
   text-align: left;
   color: var(--color-bg-surface);
@@ -64,7 +64,7 @@
   &.navItemActive {
     background: var(--color-bg-selected);
     color: var(--color-text-primary);
-    font-weight: 500;
+    font-weight: 600;
   }
 }
 
@@ -76,7 +76,7 @@
   margin: auto 0;
   width: 3px;
   height: 16px;
-  border-radius: 0 2px 2px 0;
+  border-radius: var(--radius-sm);
   background: var(--color-text-primary);
 }
 
