@@ -133,9 +133,12 @@ function AppContent() {
         setUser(result.data);
         setAuthState('notes');
         showToast('Signed in');
+      } else {
+        showToast(result.data.error);
       }
     } catch {
       setAuthState('auth');
+      showToast('Google sign-in failed');
     }
   };
 
