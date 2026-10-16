@@ -15,7 +15,7 @@
 Write freely, stay in flow, and keep your thoughts close, even without a connection.
 
 <p align="center">
-  <img src="./screenshot/scribbly.png" alt="Scribbly app screenshot" width="960" />
+  <img src="./screenshots/scribbly.png" alt="Scribbly app screenshot" width="960" />
 </p>
 
 ## Features
