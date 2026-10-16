@@ -1,4 +1,9 @@
 export const API_BASE_URL = import.meta.env.VITE_API_URL ?? '/api';
+export const OFFLINE_ERROR = 'Network error — check your connection';
+
+export function isOffline(): boolean {
+  return typeof navigator !== 'undefined' && navigator.onLine === false;
+}
 
 type RequestSuccess<T> = { ok: true; status: number; data: T };
 type RequestFailure = { ok: false; status: number; data: { error: string } };
@@ -20,6 +25,6 @@ export async function request<T = unknown>(
     }
     return { ok: false, status: res.status, data: { error: data?.error ?? 'Request failed' } };
   } catch {
-    return { ok: false, status: 0, data: { error: 'Network error — check your connection' } };
+    return { ok: false, status: 0, data: { error: OFFLINE_ERROR } };
   }
 }
