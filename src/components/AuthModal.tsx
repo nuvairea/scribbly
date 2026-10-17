@@ -61,6 +61,18 @@ export function AuthModal({ onGuest, onGoogle }: Props) {
         <button className={styles.guestBtn} onClick={onGuest}>
           Continue as guest
         </button>
+
+        <p className={styles.legal}>
+          By continuing, you agree to the{' '}
+          <a href='/terms.html' target='_blank' rel='noopener noreferrer'>
+            Terms
+          </a>{' '}
+          and{' '}
+          <a href='/privacy.html' target='_blank' rel='noopener noreferrer'>
+            Privacy Policy
+          </a>
+          .
+        </p>
       </div>
     </div>
   );

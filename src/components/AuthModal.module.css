@@ -107,3 +107,16 @@
     color: var(--color-text-primary);
   }
 }
+
+.legal {
+  font: 500 12.5px var(--font-family-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+
+  & a {
+    color: var(--color-text-primary);
+    text-underline-offset: 3px;
+  }
+}
