@@ -40,7 +40,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,ttf,woff2}'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/],
+        navigateFallbackDenylist: [/^\/api/, /^\/terms\.html$/, /^\/privacy\.html$/],
       },
     }),
   ],
