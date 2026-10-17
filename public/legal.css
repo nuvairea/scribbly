@@ -57,7 +57,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Manrope', sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -66,6 +65,7 @@ html {
 }
 
 body {
+  font-family: 'Manrope', sans-serif;
   background: var(--color-bg-page);
   color: var(--color-text-primary);
   line-height: 1.7;
