@@ -17,6 +17,7 @@ import { checkSession, deleteAccount, loginWithGoogle, logout, type User } from 
 import { NoteEditorModal } from './components/NoteEditorModal';
 import { SettingsModal } from './components/SettingsModal';
 import type { Note } from './types/note';
+import { isOffline } from './lib/api';
 
 type AuthState = 'loading' | 'auth' | 'notes';
 
@@ -149,9 +150,15 @@ function AppContent() {
   };
 
   const handleLogout = async () => {
+    if (isOffline()) {
+      showToast('Go online to log out');
+      return;
+    }
+
     const result = await logout();
     if (!result.ok) {
       console.error('Logout failed:', result.data.error);
+      showToast('Failed to log out');
       return;
     }
     localStorage.removeItem(USER_KEY);
@@ -162,6 +169,11 @@ function AppContent() {
   };
 
   const handleDeleteAccount = async () => {
+    if (isOffline()) {
+      showToast('Go online to delete your account');
+      return;
+    }
+
     const result = await deleteAccount();
     if (!result.ok) {
       console.error('Account deletion failed:', result.data.error);
