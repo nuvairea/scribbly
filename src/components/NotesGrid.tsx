@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNotes } from '../hooks/useNotes';
 import { useToast } from '../hooks/useToast';
 import { NoteCard } from './NoteCard';
@@ -23,14 +23,51 @@ const periodLabels: Record<string, string> = {
   month: 'this month',
 };
 
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+const EASE_IN = [0.4, 0, 1, 1] as const;
+
+const GLIDE = { type: 'spring', stiffness: 520, damping: 42, mass: 0.8 } as const;
+
 export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, onViewChange }: NotesGridProps) {
   const { getNotes, deleteNote } = useNotes();
   const { showToast } = useToast();
   const notes = getNotes(view === 'trash', search, tab, month ?? null);
   const hasSearch = search.trim().length > 0;
 
-  const [settledView, setSettledView] = useState<string | null>(null);
-  const settled = settledView === view;
+  const [shownView, setShownView] = useState(view);
+  const [cascade, setCascade] = useState(true);
+  if (shownView !== view) {
+    setShownView(view);
+    setCascade(true);
+  }
+  useEffect(() => {
+    const id = window.setTimeout(() => setCascade(false), 450);
+    return () => window.clearTimeout(id);
+  }, [view]);
+
+  const ids = notes.map((n) => n.id);
+  const idsKey = ids.join('|');
+  const [prev, setPrev] = useState({ view, tab, idsKey, ids });
+  const [tabEnter, setTabEnter] = useState<Map<string, number>>(new Map());
+
+  if (prev.view !== view || prev.tab !== tab || prev.idsKey !== idsKey) {
+    if (prev.view === view && prev.tab !== tab) {
+      const before = new Set(prev.ids);
+      const next = new Map<string, number>();
+      let order = 0;
+      for (const id of ids) if (!before.has(id)) next.set(id, order++);
+      setTabEnter(next);
+    }
+    setPrev({ view, tab, idsKey, ids });
+  }
+
+  useEffect(() => {
+    if (tabEnter.size === 0) return;
+    const id = window.setTimeout(() => setTabEnter(new Map()), 800);
+    return () => window.clearTimeout(id);
+  }, [tabEnter]);
+
+  const exitY = view === 'trash' ? -12 : 14;
 
   const emptyState =
     view === 'trash' ? (
@@ -56,59 +93,60 @@ export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, o
     );
 
   return (
-    <AnimatePresence mode='wait'>
-      {notes.length === 0 ? (
-        <motion.div
-          key={view === 'trash' ? 'empty-trash' : hasSearch ? 'empty-search' : `empty-${tab}`}
-          className={styles.emptyState}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.2 }}
-        >
-          {emptyState}
-        </motion.div>
-      ) : (
-        <motion.div
-          key={view}
-          className={styles.wrapper}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onAnimationComplete={() => setSettledView(view)}
-        >
-          <div className={styles.grid}>
-            <AnimatePresence mode='popLayout'>
-              {notes.map((note, index) => (
-                <motion.div
-                  key={note.id}
-                  className={styles.item}
-                  layout
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 12 }}
-                  transition={{
-                    duration: 0.25,
-                    delay: settled ? 0 : Math.min(index, 8) * 0.05,
-                    layout: { duration: 0.25, ease: 'easeOut' },
-                  }}
-                >
-                  <NoteCard
-                    note={note}
-                    view={view}
-                    onOpen={() => onOpenNote(note)}
-                    onToggleDelete={() => {
-                      void deleteNote(note.id);
-                      showToast(view === 'trash' ? 'Note restored' : 'Note moved to trash');
-                    }}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className={styles.wrapper}>
+      <div className={styles.grid}>
+        <AnimatePresence mode='popLayout' initial={cascade}>
+          {notes.map((note, index) => (
+            <motion.div
+              key={note.id}
+              className={styles.item}
+              layout='position'
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                transition: {
+                  duration: 0.24,
+                  ease: EASE_OUT,
+                  delay: cascade ? Math.min(index, 6) * 0.03 : Math.min(tabEnter.get(note.id) ?? 0, 8) * 0.05,
+                },
+              }}
+              exit={{
+                opacity: 0,
+                y: exitY,
+                scale: 0.97,
+                transition: { duration: 0.14, ease: EASE_IN },
+              }}
+              transition={{ layout: GLIDE }}
+            >
+              <NoteCard
+                note={note}
+                view={view}
+                onOpen={() => onOpenNote(note)}
+                onToggleDelete={() => {
+                  void deleteNote(note.id);
+                  showToast(view === 'trash' ? 'Note restored' : 'Note moved to trash');
+                }}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence mode='popLayout'>
+        {notes.length === 0 && (
+          <motion.div
+            key={`empty-${view}`}
+            className={styles.emptyState}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: EASE_OUT, delay: 0.08 } }}
+            exit={{ opacity: 0, transition: { duration: 0.1 } }}
+          >
+            {emptyState}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
