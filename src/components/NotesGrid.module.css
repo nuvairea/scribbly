@@ -2,8 +2,8 @@
   width: 100%;
   min-width: 0;
 }
-
 .grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 25px;
