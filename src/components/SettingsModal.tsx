@@ -111,9 +111,16 @@ export function SettingsModal({
             aria-modal='true'
             aria-label='Settings'
             initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              transition: { type: 'spring', duration: 0.18, bounce: 0 },
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.96,
+              transition: { duration: 0.14, ease: [0.4, 0, 1, 1] },
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.header}>
