@@ -15,6 +15,8 @@ interface SidebarProps {
   trashCount: number;
 }
 
+const BAR_TRANSITION = { type: 'spring', duration: 0.22, bounce: 0 } as const;
+
 export function Sidebar({
   open,
   view,
@@ -46,7 +48,9 @@ export function Sidebar({
           <LayoutGrid size={18} />
           <span>All notes</span>
           {notesCount > 0 && <span className={styles.badge}>{notesCount}</span>}
-          {view === 'notes' && <motion.span layoutId='nav-active-bar' className={styles.activeBar} />}
+          {view === 'notes' && (
+            <motion.span layoutId='nav-active-bar' className={styles.activeBar} transition={BAR_TRANSITION} />
+          )}
         </button>
         <button
           className={`${styles.navItem} ${view === 'trash' ? styles.navItemActive : ''}`}
@@ -55,7 +59,9 @@ export function Sidebar({
           <Trash size={18} />
           <span>Trash</span>
           {trashCount > 0 && <span className={styles.badge}>{trashCount}</span>}
-          {view === 'trash' && <motion.span layoutId='nav-active-bar' className={styles.activeBar} />}
+          {view === 'trash' && (
+            <motion.span layoutId='nav-active-bar' className={styles.activeBar} transition={BAR_TRANSITION} />
+          )}
         </button>
       </nav>
 
