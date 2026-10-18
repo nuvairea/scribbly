@@ -396,9 +396,11 @@ function Dashboard({
         onClick={() => setSidebarOpen(false)}
         aria-hidden='true'
       />
-      <button type='button' className={styles.fab} aria-label='New scribble' onClick={openNewNote}>
-        <Plus size={24} />
-      </button>
+      {view === 'notes' && (
+        <button type='button' className={styles.fab} aria-label='New scribble' onClick={openNewNote}>
+          <Plus size={24} />
+        </button>
+      )}
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
