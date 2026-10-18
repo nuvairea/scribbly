@@ -170,14 +170,14 @@
     visibility: hidden;
     transform: translateX(-100%);
     transition:
-      transform 0.3s ease,
-      visibility 0s linear 0.3s;
+      transform 0.23s ease,
+      visibility 0s linear 0.23s;
   }
 
   .sidebar.open {
     visibility: visible;
     transform: translateX(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.23s ease;
   }
 
   .brand {
