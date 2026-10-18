@@ -19,13 +19,9 @@ const tabs = [
   { id: 'month', label: 'This month' },
 ];
 
-export function Tabs({
-  tab,
-  onTabChange,
-  month,
-  onMonthChange,
-  monthBounds,
-}: TabsProps) {
+const UNDERLINE_TRANSITION = { type: 'spring', duration: 0.22, bounce: 0 } as const;
+
+export function Tabs({ tab, onTabChange, month, onMonthChange, monthBounds }: TabsProps) {
   const scrollRef = useScrollFade<HTMLDivElement>('x');
 
   useEffect(() => {
@@ -36,11 +32,7 @@ export function Tabs({
 
   return (
     <div className={styles.tabsRow}>
-      <motion.div
-        layoutScroll
-        ref={scrollRef}
-        className={styles.tabs}
-      >
+      <motion.div layoutScroll ref={scrollRef} className={styles.tabs}>
         {tabs.map(({ id, label }) => (
           <button
             key={id}
@@ -51,10 +43,7 @@ export function Tabs({
           >
             {label}
             {tab === id && (
-              <motion.span
-                layoutId='tab-underline'
-                className={styles.underline}
-              />
+              <motion.span layoutId='tab-underline' className={styles.underline} transition={UNDERLINE_TRANSITION} />
             )}
           </button>
         ))}
