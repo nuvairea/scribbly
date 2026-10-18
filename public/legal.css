@@ -128,24 +128,16 @@ a {
 .back {
   display: inline-block;
   margin-top: 36px;
-  padding: 8px 12px;
+  padding: 10px 18px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 14px;
   text-decoration: none;
-  transition: background-color 0.15s ease;
-}
+  transition: border-color 0.15s ease;
 
-.back:hover {
-  background: var(--color-border);
-}
-
-.back:focus-visible,
-.brand:focus-visible,
-a:focus-visible {
-  outline: 2px solid var(--color-text-primary);
-  outline-offset: 3px;
-  border-radius: 4px;
+  &:hover {
+    border-color: var(--color-text-primary);
+  }
 }
 
 @media (max-width: 520px) {
