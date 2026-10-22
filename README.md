@@ -6,7 +6,7 @@
   <a href="https://scribbly-app.onrender.com">
   <img src="https://img.shields.io/badge/live_app-scribbly--app.onrender.com-2f6f61?style=flat-square" alt="Live app" />
 </a>
-  <a href="https://github.com/nuvairea/scribbly/releases/tag/v3.0.0"><img src="https://img.shields.io/badge/status-v3.0.0-orange?style=flat-square" alt="Status: v3.0.0" /></a>
+  <a href="https://github.com/nuvairea/scribbly/releases/tag/v3.1.0"><img src="https://img.shields.io/badge/status-v3.0.0-orange?style=flat-square" alt="Status: v3.1.0" /></a>
   <a href="https://react.dev"><img src="https://img.shields.io/badge/React-TypeScript-61dafb?style=flat-square&logo=react&logoColor=111111" alt="React and TypeScript" /></a>
   <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License: MIT" /></a>
