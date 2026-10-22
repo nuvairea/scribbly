@@ -1,16 +1,21 @@
-import { CloudAlert, CloudOff, CloudSync, CloudCheck, Menu, Search, type LucideIcon } from 'lucide-react';
+import { useState } from 'react';
+import { CloudAlert, CloudCheck, CloudOff, CloudSync, Search, type LucideIcon } from 'lucide-react';
 import styles from './TopHeader.module.css';
 
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'failed';
 
 interface TopHeaderProps {
-  title: string;
+  view: 'notes' | 'trash';
+  userName?: string;
+  userPicture?: string;
+  notesCount: number;
+  todayCount: number;
+  trashCount: number;
   searchValue: string;
   onSearchChange: (value: string) => void;
   unsyncedCount: number;
   syncStatus: SyncStatus | null;
-  menuOpen: boolean;
-  onMenuClick: () => void;
+  onOpenSettings: () => void;
 }
 
 const SYNC_LABELS: Record<SyncStatus, (count: number) => string> = {
@@ -32,48 +37,84 @@ const SYNC_CLASSES: Partial<Record<SyncStatus, string>> = {
   syncing: styles.syncing,
 };
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function getHeadline(view: 'notes' | 'trash', notesCount: number, todayCount: number, trashCount: number) {
+  if (view === 'trash') {
+    return trashCount === 0
+      ? { main: 'Trash is empty.', rest: '' }
+      : { main: `${trashCount} in trash`, rest: ', gone after 7 days.' };
+  }
+
+  if (notesCount === 0) return { main: 'No notes yet.', rest: '' };
+
+  return {
+    main: `${notesCount} ${notesCount === 1 ? 'note' : 'notes'}`,
+    rest: todayCount > 0 ? `, ${todayCount} today.` : ', none today.',
+  };
+}
+
 export function TopHeader({
-  title,
+  view,
+  userName,
+  userPicture,
+  notesCount,
+  todayCount,
+  trashCount,
   searchValue,
   onSearchChange,
   unsyncedCount,
   syncStatus,
-  menuOpen,
-  onMenuClick,
+  onOpenSettings,
 }: TopHeaderProps) {
   const SyncIcon = syncStatus ? SYNC_ICONS[syncStatus] : null;
+  const [imgFailed, setImgFailed] = useState(false);
+  const initial = (userName ?? 'Guest').charAt(0).toUpperCase();
+  const headline = getHeadline(view, notesCount, todayCount, trashCount);
 
   return (
     <header className={styles.header}>
-      <div className={styles.left}>
-        <button
-          type='button'
-          className={styles.menuButton}
-          aria-label='Open menu'
-          aria-expanded={menuOpen}
-          onClick={onMenuClick}
-        >
-          <Menu size={24} />
-        </button>
-        <h1 className={styles.brand}>Scribbly</h1>
-        <h2 className={styles.title}>{title}</h2>
+      <p className={styles.brand}>Scribbly</p>
+
+      <div className={styles.headline}>
+        <p className={styles.greeting}>{userName ? `${getGreeting()}, ${userName}` : getGreeting()}</p>
+        <h1 className={styles.title}>
+          {headline.main}
+          <span className={styles.muted}>{headline.rest}</span>
+        </h1>
       </div>
-      <label className={styles.search}>
-        <Search size={20} aria-hidden='true' />
-        <input
-          type='search'
-          aria-label='Search notes'
-          placeholder='Search'
-          value={searchValue}
-          onChange={(event) => onSearchChange(event.target.value)}
-        />
-      </label>
-      {syncStatus && SyncIcon && (
-        <div role='status' className={`${styles.syncBadge} ${SYNC_CLASSES[syncStatus] ?? ''}`}>
-          <SyncIcon size={16} />
-          <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
-        </div>
-      )}
+
+      <div className={styles.tools}>
+        {syncStatus && SyncIcon && (
+          <div role='status' className={`${styles.syncBadge} ${SYNC_CLASSES[syncStatus] ?? ''}`}>
+            <SyncIcon size={16} />
+            <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
+          </div>
+        )}
+        <label className={styles.search}>
+          <Search size={18} aria-hidden='true' />
+          <input
+            type='search'
+            aria-label='Search notes'
+            placeholder='Search'
+            value={searchValue}
+            onChange={(event) => onSearchChange(event.target.value)}
+          />
+        </label>
+      </div>
+
+      <button type='button' className={styles.avatar} aria-label='Profile and settings' onClick={onOpenSettings}>
+        {userPicture && !imgFailed ? (
+          <img src={userPicture} alt='' referrerPolicy='no-referrer' onError={() => setImgFailed(true)} />
+        ) : (
+          initial
+        )}
+      </button>
     </header>
   );
 }

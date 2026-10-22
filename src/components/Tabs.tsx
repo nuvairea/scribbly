@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { DateNav } from './DateNav';
 import type { MonthPosition } from '../lib/NoteQueries';
 import { useScrollFade } from '../hooks/useScrollFade';
@@ -19,7 +19,7 @@ const tabs = [
   { id: 'month', label: 'This month' },
 ];
 
-const UNDERLINE_TRANSITION = { type: 'spring', duration: 0.22, bounce: 0 } as const;
+const PILL_TRANSITION = { type: 'spring', duration: 0.22, bounce: 0 } as const;
 
 export function Tabs({ tab, onTabChange, month, onMonthChange, monthBounds }: TabsProps) {
   const scrollRef = useScrollFade<HTMLDivElement>('x');
@@ -41,10 +41,8 @@ export function Tabs({ tab, onTabChange, month, onMonthChange, monthBounds }: Ta
             aria-current={tab === id ? 'true' : undefined}
             onClick={() => onTabChange(id)}
           >
-            {label}
-            {tab === id && (
-              <motion.span layoutId='tab-underline' className={styles.underline} transition={UNDERLINE_TRANSITION} />
-            )}
+            {tab === id && <motion.span layoutId='tab-pill' className={styles.pill} transition={PILL_TRANSITION} />}
+            <span className={styles.tabLabel}>{label}</span>
           </button>
         ))}
       </motion.div>

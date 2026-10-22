@@ -15,7 +15,7 @@
   width: 300px;
   height: 200px;
   border-radius: 24px;
-  background: #eada76;
+  background: var(--color-note-sun);
   opacity: 0.64;
 
   & {
@@ -32,7 +32,7 @@
   width: 260px;
   height: 260px;
   border-radius: 50%;
-  background: #7bb2db;
+  background: var(--color-note-sky);
   opacity: 0.64;
 
   & {

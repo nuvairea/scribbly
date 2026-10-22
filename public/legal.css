@@ -7,6 +7,14 @@
 }
 
 @font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('./fonts/BricolageGrotesque-VariableFont_opsz\,wdth\,wght.ttf') format('truetype');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Dancing Script';
   src: url('/fonts/DancingScript-VariableFont_wght.ttf') format('truetype');
   font-weight: 400 700;
@@ -65,7 +73,7 @@ html {
 }
 
 body {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Bricolage Grotesque', sans-serif;
   background: var(--color-bg-page);
   color: var(--color-text-primary);
   line-height: 1.7;

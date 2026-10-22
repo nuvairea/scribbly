@@ -3,16 +3,9 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
 import { useScrollFade } from '../hooks/useScrollFade';
+import { NOTE_COLORS, noteColorVar, toNoteColor } from '../lib/noteColors';
 import type { Note } from '../types/note';
 import styles from './NoteEditorModal.module.css';
-
-const COLORS = [
-  { name: 'yellow', value: '#e9e381' },
-  { name: 'blue', value: '#6cb5de' },
-  { name: 'coral', value: '#eea9ab' },
-  { name: 'mint', value: '#5cffd9' },
-  { name: 'lavender', value: '#c9a9e0' },
-];
 
 const PLACEHOLDERS = [
   'Start scribbling...',
@@ -39,7 +32,7 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
   const { addNote, updateNote } = useNotes();
   const [title, setTitle] = useState(note?.title ?? '');
   const [body, setBody] = useState(note?.body ?? '');
-  const [color, setColor] = useState(note?.color ?? COLORS[0].value);
+  const [color, setColor] = useState(toNoteColor(note?.color));
   const [placeholder] = useState(() => PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]);
   const titleRef = useScrollFade<HTMLInputElement>('x');
   const bodyRef = useScrollFade<HTMLTextAreaElement>('y');
@@ -52,7 +45,7 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
     }
 
     if (note) {
-      const hasChanges = title !== note.title || body !== note.body || color !== note.color;
+      const hasChanges = title !== note.title || body !== note.body || color !== toNoteColor(note.color);
       if (hasChanges) {
         updateNote(note.id, title, body, color);
       }
@@ -102,15 +95,15 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
         />
 
         <div className={styles.colors}>
-          {COLORS.map((c) => (
+          {NOTE_COLORS.map((name) => (
             <button
-              key={c.name}
+              key={name}
               type='button'
               className={styles.swatch}
-              style={{ backgroundColor: c.value }}
-              data-active={color === c.value}
-              onClick={() => setColor(c.value)}
-              aria-label={c.name}
+              style={{ backgroundColor: noteColorVar(name) }}
+              data-active={color === name}
+              onClick={() => setColor(name)}
+              aria-label={name}
             />
           ))}
         </div>

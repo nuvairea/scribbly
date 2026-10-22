@@ -9,7 +9,7 @@ interface DateNavProps {
 }
 
 const monthFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'long',
+  month: 'short',
   year: 'numeric',
 });
 

@@ -1,26 +1,31 @@
 .dateNav {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 13px;
-  color: var(--color-text-secondary);
+  gap: 2px;
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .arrow {
   display: flex;
+  width: 34px;
+  height: 34px;
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  border-radius: var(--radius-sm);
-  color: var(--color-text-secondary);
+  border-radius: 50%;
+  color: var(--color-text-primary);
 
   &:hover {
     background: var(--color-bg-selected);
-    color: var(--color-text-primary);
   }
 }
 
 .label {
-  min-width: 90px;
+  min-width: 84px;
+  padding: 0 8px;
   text-align: center;
 }

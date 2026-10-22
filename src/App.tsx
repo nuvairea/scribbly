@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, type CSSProperties } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Plus } from 'lucide-react';
-import { Sidebar } from './components/Sidebar';
+import { Dock } from './components/Dock';
 import { TopHeader, type SyncStatus } from './components/TopHeader';
 import { Tabs } from './components/Tabs';
 import { NotesGrid } from './components/NotesGrid';
@@ -9,7 +8,6 @@ import { AuthModal } from './components/AuthModal';
 import { SplashScreen } from './components/SplashScreen';
 import styles from './App.module.css';
 import { useNotes } from './hooks/useNotes';
-import { useScrollFade } from './hooks/useScrollFade';
 import { useToast } from './hooks/useToast';
 import { ToastProvider } from './context/ToastProvider';
 import { getMonthBounds, type MonthPosition } from './lib/NoteQueries';
@@ -236,8 +234,6 @@ function Dashboard({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const contentRef = useScrollFade<HTMLDivElement>('y', { observeContent: true });
 
   const [selectedMonth, setSelectedMonth] = useState<MonthPosition>({
     month: new Date().getMonth(),
@@ -251,6 +247,8 @@ function Dashboard({
 
   const notesCount = notes.filter((n) => !n.deleted).length;
   const trashCount = notes.filter((n) => n.deleted).length;
+  const startOfToday = new Date().setHours(0, 0, 0, 0);
+  const todayCount = notes.filter((n) => !n.deleted && n.timestamp >= startOfToday).length;
 
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -310,16 +308,8 @@ function Dashboard({
       ? 'synced'
       : null;
 
-  useEffect(() => {
-    if (!sidebarOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSidebarOpen(false);
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [sidebarOpen]);
-
   const openNewNote = () => {
+    setView('notes');
     setEditingNote(null);
     setEditorOpen(true);
   };
@@ -335,72 +325,50 @@ function Dashboard({
 
   return (
     <motion.div className={styles.page} {...FADE}>
-      <div className={styles.appFrame}>
-        <Sidebar
-          open={sidebarOpen}
+      <div className={styles.shell}>
+        <TopHeader
           view={view}
-          onViewChange={(nextView) => {
-            setView(nextView);
-            setSidebarOpen(false);
-          }}
-          onAddNote={() => {
-            openNewNote();
-            setSidebarOpen(false);
-          }}
-          onOpenSettings={() => {
-            setSettingsOpen(true);
-            setSidebarOpen(false);
-          }}
-          userLabel={user?.firstName ?? 'Guest'}
+          userName={user?.firstName}
           userPicture={user?.picture}
           notesCount={notesCount}
+          todayCount={todayCount}
           trashCount={trashCount}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          unsyncedCount={unsyncedCount}
+          syncStatus={syncStatus}
+          onOpenSettings={() => setSettingsOpen(true)}
         />
-        <main className={styles.main}>
-          <TopHeader
-            title={view === 'notes' ? 'Notes' : 'Trash'}
-            searchValue={searchQuery}
-            onSearchChange={setSearchQuery}
-            unsyncedCount={unsyncedCount}
-            syncStatus={syncStatus}
-            menuOpen={sidebarOpen}
-            onMenuClick={() => setSidebarOpen(true)}
-          />
-          <div className={styles.contentFrame}>
-            <div ref={contentRef} className={styles.content}>
-              {view === 'notes' && (
-                <Tabs
-                  tab={selectedTab}
-                  onTabChange={setSelectedTab}
-                  month={selectedMonth}
-                  onMonthChange={setSelectedMonth}
-                  monthBounds={monthBounds}
-                />
-              )}
 
-              <NotesGrid
-                view={view}
-                search={searchQuery}
-                tab={selectedTab}
-                month={selectedMonth}
-                onOpenNote={openExistingNote}
-                onViewChange={setView}
-              />
-            </div>
-          </div>
-          <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
-        </main>
+        {view === 'notes' && (
+          <Tabs
+            tab={selectedTab}
+            onTabChange={setSelectedTab}
+            month={selectedMonth}
+            onMonthChange={setSelectedMonth}
+            monthBounds={monthBounds}
+          />
+        )}
+
+        <NotesGrid
+          view={view}
+          search={searchQuery}
+          tab={selectedTab}
+          month={selectedMonth}
+          onOpenNote={openExistingNote}
+          onViewChange={setView}
+        />
       </div>
-      <div
-        className={`${styles.overlay} ${sidebarOpen ? styles.overlayActive : ''}`}
-        onClick={() => setSidebarOpen(false)}
-        aria-hidden='true'
+
+      <Dock
+        view={view}
+        onViewChange={setView}
+        onAddNote={openNewNote}
+        onOpenSettings={() => setSettingsOpen(true)}
+        trashCount={trashCount}
       />
-      {view === 'notes' && (
-        <button type='button' className={styles.fab} aria-label='New scribble' onClick={openNewNote}>
-          <Plus size={24} />
-        </button>
-      )}
+
+      <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
       <SettingsModal
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
