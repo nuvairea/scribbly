@@ -21,6 +21,14 @@ body,
 }
 
 @font-face {
+  font-family: 'Bricolage Grotesque';
+  src: url('./assets/fonts/BricolageGrotesque-VariableFont_opsz\,wdth\,wght.ttf') format('truetype');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Dancing Script';
   src: url('./assets/fonts/DancingScript-VariableFont_wght.ttf') format('truetype');
   font-weight: 400 700;
@@ -29,7 +37,7 @@ body,
 }
 
 body {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Bricolage Grotesque', sans-serif;
   background-color: var(--color-bg-muted);
   color: var(--color-text-primary);
 }
@@ -43,32 +51,42 @@ button {
 }
 
 :root {
-  --color-bg-page: #e6e7e9;
-  --color-bg-surface: #ffffff;
-  --color-bg-muted: #f0f2f5;
-  --color-bg-selected: #f0f0f0;
-  --color-bg-search: #f4f5f8;
-  --color-border: #dddddd;
-  --color-bg-modal: #ffffff;
-  --color-text-primary: #111111;
-  --color-text-secondary: #a0a4ab;
-  --color-bg-mobile: #ffffff;
-  --color-search-mobile: #f4f5f8;
+  --color-bg-page: #d3ddd1;
+  --color-bg-surface: #fbfcf9;
+  --color-bg-muted: #e1ebdf;
+  --color-bg-selected: #e1ebdf;
+  --color-bg-search: #e1ebdf;
+  --color-border: #c7d1c5;
+  --color-bg-modal: #fbfcf9;
+  --color-text-primary: #091a11;
+  --color-text-secondary: #55695d;
+  --color-bg-mobile: #fbfcf9;
+  --color-search-mobile: #e1ebdf;
 
-  --color-avatar-bg: #fff0d3;
-  --color-avatar-text: #9d6b2b;
+  --color-avatar-bg: #091a11;
+  --color-avatar-text: #bbec4c;
 
-  --color-card-action-bg: #111111;
-  --color-card-action-color: #ffffff;
+  --color-card-action-bg: #091a11;
+  --color-card-action-color: #fbfcf9;
 
-  --color-shadow: rgba(0, 0, 0, 0.05);
-  --color-overlay: rgba(0, 0, 0, 0.23);
+  --color-shadow: rgba(9, 26, 17, 0.06);
+  --color-overlay: rgba(9, 26, 17, 0.25);
   --color-danger: #d85a30;
 
+  --color-dock: #091a11;
+  --color-dock-active: rgba(251, 252, 249, 0.15);
+  --color-accent: #bbec4c;
+
+  --color-note-sun: #fee484;
+  --color-note-sky: #a8d8fb;
+  --color-note-clay: #ffb8aa;
+  --color-note-mint: #9becc1;
+  --color-note-blush: #e9c1f2;
+
   --font-family-base: 'Manrope', sans-serif;
-  --radius-sm: 10px;
-  --radius-md: 24px;
-  --radius-lg: 50px;
+  --radius-sm: 8px;
+  --radius-md: 32px;
+  --radius-lg: 9999px;
 
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -103,26 +121,26 @@ button {
 }
 
 :root[data-theme='light'] {
-  --color-bg-page: #e6e7e9;
-  --color-bg-surface: #ffffff;
-  --color-bg-muted: #f0f2f5;
-  --color-bg-selected: #f0f0f0;
-  --color-bg-search: #f4f5f8;
-  --color-border: #dddddd;
-  --color-bg-modal: #ffffff;
-  --color-text-primary: #111111;
-  --color-text-secondary: #a0a4ab;
-  --color-bg-mobile: #ffffff;
-  --color-search-mobile: #f4f5f8;
+  --color-bg-page: #d3ddd1;
+  --color-bg-surface: #fbfcf9;
+  --color-bg-muted: #e1ebdf;
+  --color-bg-selected: #e1ebdf;
+  --color-bg-search: #e1ebdf;
+  --color-border: #c7d1c5;
+  --color-bg-modal: #fbfcf9;
+  --color-text-primary: #091a11;
+  --color-text-secondary: #55695d;
+  --color-bg-mobile: #fbfcf9;
+  --color-search-mobile: #e1ebdf;
 
-  --color-avatar-bg: #fff0d3;
-  --color-avatar-text: #9d6b2b;
+  --color-avatar-bg: #091a11;
+  --color-avatar-text: #bbec4c;
 
-  --color-card-action-bg: #111111;
-  --color-card-action-color: #ffffff;
+  --color-card-action-bg: #091a11;
+  --color-card-action-color: #fbfcf9;
 
-  --color-shadow: rgba(0, 0, 0, 0.05);
-  --color-overlay: rgba(0, 0, 0, 0.23);
+  --color-shadow: rgba(9, 26, 17, 0.06);
+  --color-overlay: rgba(9, 26, 17, 0.25);
   --color-danger: #d85a30;
 }
 

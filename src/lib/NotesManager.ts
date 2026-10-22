@@ -41,7 +41,7 @@ export class NotesManager {
       id: note.id ?? note._id?.toString() ?? '',
       title: note.title ?? '',
       body: note.body ?? '',
-      color: note.color ?? '#e9e381',
+      color: note.color ?? 'sun',
       date: note.date ?? '',
       time: note.time ?? '',
       timestamp,
@@ -76,7 +76,7 @@ export class NotesManager {
     this.addNote(
       'This note self-destructs...',
       "...it doesn't.\nbut it'd be really cool if it did.\nwelcome to Scribbly!",
-      '#e9e381'
+      'sun'
     );
   }
 

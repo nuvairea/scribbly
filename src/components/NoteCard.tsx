@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { MoreHorizontal, Undo2, Trash, Clock } from 'lucide-react';
 import type { Note } from '../types/note';
+import { noteColorVar } from '../lib/noteColors';
 import styles from './NoteCard.module.css';
 
 interface NoteCardProps {
@@ -18,7 +19,7 @@ export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) 
   return (
     <div
       className={styles.card}
-      style={{ backgroundColor: note.color }}
+      style={{ backgroundColor: noteColorVar(note.color) }}
       onClick={() => {
         if (!isTrash && !note.deleted) {
           onOpen();

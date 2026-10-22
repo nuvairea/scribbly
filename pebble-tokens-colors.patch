@@ -1,0 +1,250 @@
+diff --git a/src/components/NoteCard.tsx b/src/components/NoteCard.tsx
+index eca7f63..fb1d2c9 100644
+--- a/src/components/NoteCard.tsx
++++ b/src/components/NoteCard.tsx
+@@ -2,6 +2,7 @@ import { useState } from 'react';
+ import { AnimatePresence, motion } from 'motion/react';
+ import { MoreHorizontal, Undo2, Trash, Clock } from 'lucide-react';
+ import type { Note } from '../types/note';
++import { noteColorVar } from '../lib/noteColors';
+ import styles from './NoteCard.module.css';
+ 
+ interface NoteCardProps {
+@@ -18,7 +19,7 @@ export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps)
+   return (
+     <div
+       className={styles.card}
+-      style={{ backgroundColor: note.color }}
++      style={{ backgroundColor: noteColorVar(note.color) }}
+       onClick={() => {
+         if (!isTrash && !note.deleted) {
+           onOpen();
+diff --git a/src/components/NoteEditorModal.tsx b/src/components/NoteEditorModal.tsx
+index 2c5809a..8fcdd91 100644
+--- a/src/components/NoteEditorModal.tsx
++++ b/src/components/NoteEditorModal.tsx
+@@ -3,17 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
+ import { X } from 'lucide-react';
+ import { useNotes } from '../hooks/useNotes';
+ import { useScrollFade } from '../hooks/useScrollFade';
++import { NOTE_COLORS, noteColorVar, toNoteColor } from '../lib/noteColors';
+ import type { Note } from '../types/note';
+ import styles from './NoteEditorModal.module.css';
+ 
+-const COLORS = [
+-  { name: 'yellow', value: '#e9e381' },
+-  { name: 'blue', value: '#6cb5de' },
+-  { name: 'coral', value: '#eea9ab' },
+-  { name: 'mint', value: '#5cffd9' },
+-  { name: 'lavender', value: '#c9a9e0' },
+-];
+-
+ const PLACEHOLDERS = [
+   'Start scribbling...',
+   "Today's multi-dollar idea?",
+@@ -39,7 +32,7 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
+   const { addNote, updateNote } = useNotes();
+   const [title, setTitle] = useState(note?.title ?? '');
+   const [body, setBody] = useState(note?.body ?? '');
+-  const [color, setColor] = useState(note?.color ?? COLORS[0].value);
++  const [color, setColor] = useState(toNoteColor(note?.color));
+   const [placeholder] = useState(() => PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]);
+   const titleRef = useScrollFade<HTMLInputElement>('x');
+   const bodyRef = useScrollFade<HTMLTextAreaElement>('y');
+@@ -52,7 +45,7 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
+     }
+ 
+     if (note) {
+-      const hasChanges = title !== note.title || body !== note.body || color !== note.color;
++      const hasChanges = title !== note.title || body !== note.body || color !== toNoteColor(note.color);
+       if (hasChanges) {
+         updateNote(note.id, title, body, color);
+       }
+@@ -102,15 +95,15 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
+         />
+ 
+         <div className={styles.colors}>
+-          {COLORS.map((c) => (
++          {NOTE_COLORS.map((name) => (
+             <button
+-              key={c.name}
++              key={name}
+               type='button'
+               className={styles.swatch}
+-              style={{ backgroundColor: c.value }}
+-              data-active={color === c.value}
+-              onClick={() => setColor(c.value)}
+-              aria-label={c.name}
++              style={{ backgroundColor: noteColorVar(name) }}
++              data-active={color === name}
++              onClick={() => setColor(name)}
++              aria-label={name}
+             />
+           ))}
+         </div>
+diff --git a/src/index.css b/src/index.css
+index a60d9fc..eb1e8a2 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -43,32 +43,42 @@ button {
+ }
+ 
+ :root {
+-  --color-bg-page: #e6e7e9;
+-  --color-bg-surface: #ffffff;
+-  --color-bg-muted: #f0f2f5;
+-  --color-bg-selected: #f0f0f0;
+-  --color-bg-search: #f4f5f8;
+-  --color-border: #dddddd;
+-  --color-bg-modal: #ffffff;
+-  --color-text-primary: #111111;
+-  --color-text-secondary: #a0a4ab;
+-  --color-bg-mobile: #ffffff;
+-  --color-search-mobile: #f4f5f8;
+-
+-  --color-avatar-bg: #fff0d3;
+-  --color-avatar-text: #9d6b2b;
+-
+-  --color-card-action-bg: #111111;
+-  --color-card-action-color: #ffffff;
+-
+-  --color-shadow: rgba(0, 0, 0, 0.05);
+-  --color-overlay: rgba(0, 0, 0, 0.23);
++  --color-bg-page: #d3ddd1;
++  --color-bg-surface: #fbfcf9;
++  --color-bg-muted: #e1ebdf;
++  --color-bg-selected: #e1ebdf;
++  --color-bg-search: #e1ebdf;
++  --color-border: #c7d1c5;
++  --color-bg-modal: #fbfcf9;
++  --color-text-primary: #091a11;
++  --color-text-secondary: #55695d;
++  --color-bg-mobile: #fbfcf9;
++  --color-search-mobile: #e1ebdf;
++
++  --color-avatar-bg: #091a11;
++  --color-avatar-text: #bbec4c;
++
++  --color-card-action-bg: #091a11;
++  --color-card-action-color: #fbfcf9;
++
++  --color-shadow: rgba(9, 26, 17, 0.06);
++  --color-overlay: rgba(9, 26, 17, 0.25);
+   --color-danger: #d85a30;
+ 
++  --color-dock: #091a11;
++  --color-dock-active: rgba(251, 252, 249, 0.15);
++  --color-accent: #bbec4c;
++
++  --color-note-sun: #fee484;
++  --color-note-sky: #a8d8fb;
++  --color-note-clay: #ffb8aa;
++  --color-note-mint: #9becc1;
++  --color-note-blush: #e9c1f2;
++
+   --font-family-base: 'Manrope', sans-serif;
+-  --radius-sm: 10px;
+-  --radius-md: 24px;
+-  --radius-lg: 50px;
++  --radius-sm: 8px;
++  --radius-md: 32px;
++  --radius-lg: 9999px;
+ 
+   text-rendering: optimizeLegibility;
+   -webkit-font-smoothing: antialiased;
+@@ -103,26 +113,26 @@ button {
+ }
+ 
+ :root[data-theme='light'] {
+-  --color-bg-page: #e6e7e9;
+-  --color-bg-surface: #ffffff;
+-  --color-bg-muted: #f0f2f5;
+-  --color-bg-selected: #f0f0f0;
+-  --color-bg-search: #f4f5f8;
+-  --color-border: #dddddd;
+-  --color-bg-modal: #ffffff;
+-  --color-text-primary: #111111;
+-  --color-text-secondary: #a0a4ab;
+-  --color-bg-mobile: #ffffff;
+-  --color-search-mobile: #f4f5f8;
+-
+-  --color-avatar-bg: #fff0d3;
+-  --color-avatar-text: #9d6b2b;
+-
+-  --color-card-action-bg: #111111;
+-  --color-card-action-color: #ffffff;
+-
+-  --color-shadow: rgba(0, 0, 0, 0.05);
+-  --color-overlay: rgba(0, 0, 0, 0.23);
++  --color-bg-page: #d3ddd1;
++  --color-bg-surface: #fbfcf9;
++  --color-bg-muted: #e1ebdf;
++  --color-bg-selected: #e1ebdf;
++  --color-bg-search: #e1ebdf;
++  --color-border: #c7d1c5;
++  --color-bg-modal: #fbfcf9;
++  --color-text-primary: #091a11;
++  --color-text-secondary: #55695d;
++  --color-bg-mobile: #fbfcf9;
++  --color-search-mobile: #e1ebdf;
++
++  --color-avatar-bg: #091a11;
++  --color-avatar-text: #bbec4c;
++
++  --color-card-action-bg: #091a11;
++  --color-card-action-color: #fbfcf9;
++
++  --color-shadow: rgba(9, 26, 17, 0.06);
++  --color-overlay: rgba(9, 26, 17, 0.25);
+   --color-danger: #d85a30;
+ }
+ 
+diff --git a/src/lib/NotesManager.ts b/src/lib/NotesManager.ts
+index 3201cf3..a7cf5a4 100644
+--- a/src/lib/NotesManager.ts
++++ b/src/lib/NotesManager.ts
+@@ -41,7 +41,7 @@ export class NotesManager {
+       id: note.id ?? note._id?.toString() ?? '',
+       title: note.title ?? '',
+       body: note.body ?? '',
+-      color: note.color ?? '#e9e381',
++      color: note.color ?? 'sun',
+       date: note.date ?? '',
+       time: note.time ?? '',
+       timestamp,
+@@ -76,7 +76,7 @@ export class NotesManager {
+     this.addNote(
+       'This note self-destructs...',
+       "...it doesn't.\nbut it'd be really cool if it did.\nwelcome to Scribbly!",
+-      '#e9e381'
++      'sun'
+     );
+   }
+ 
+diff --git a/src/lib/noteColors.ts b/src/lib/noteColors.ts
+new file mode 100644
+index 0000000..9263dbd
+--- /dev/null
++++ b/src/lib/noteColors.ts
+@@ -0,0 +1,21 @@
++export const NOTE_COLORS = ['sun', 'sky', 'clay', 'mint', 'blush'] as const;
++
++export type NoteColorName = (typeof NOTE_COLORS)[number];
++
++const LEGACY_HEX: Record<string, NoteColorName> = {
++  '#e9e381': 'sun',
++  '#6cb5de': 'sky',
++  '#eea9ab': 'clay',
++  '#5cffd9': 'mint',
++  '#c9a9e0': 'blush',
++};
++
++export function toNoteColor(value: string | null | undefined): NoteColorName {
++  if (!value) return NOTE_COLORS[0];
++  if ((NOTE_COLORS as readonly string[]).includes(value)) return value as NoteColorName;
++  return LEGACY_HEX[value.toLowerCase()] ?? NOTE_COLORS[0];
++}
++
++export function noteColorVar(value: string | null | undefined): string {
++  return `var(--color-note-${toNoteColor(value)})`;
++}
