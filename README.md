@@ -46,7 +46,7 @@ Guest mode never touches the network.
 
 - **Frontend:** React + TypeScript and Vite
 - **Styling:** CSS Modules
-- **Animations:** Motion
+- **Animations:** [Motion](https://motion.dev)
 - **Icons:** Lucide
 - **Auth:** Google OAuth
 - **PWA:** installable, works offline
