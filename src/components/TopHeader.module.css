@@ -6,6 +6,7 @@
     'headline tools avatar';
   align-items: center;
   gap: 0 14px;
+  margin-bottom: 22px;
 }
 
 .brand {
