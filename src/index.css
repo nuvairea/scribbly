@@ -12,12 +12,12 @@ body,
   scroll-behavior: smooth;
 }
 
-@font-face {
-  font-family: 'Manrope';
-  src: url('./assets/fonts/Manrope-VariableFont_wght.ttf') format('truetype');
-  font-weight: 200 800;
-  font-style: normal;
-  font-display: swap;
+html {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @font-face {
@@ -31,7 +31,7 @@ body,
 @font-face {
   font-family: 'Dancing Script';
   src: url('./assets/fonts/DancingScript-VariableFont_wght.ttf') format('truetype');
-  font-weight: 400 700;
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
 }

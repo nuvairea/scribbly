@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { MoreHorizontal, Undo2, Trash, Clock } from 'lucide-react';
+import { MoreHorizontal, Undo2, Trash } from 'lucide-react';
 import type { Note } from '../types/note';
 import { noteColorVar } from '../lib/noteColors';
 import styles from './NoteCard.module.css';
@@ -12,6 +12,27 @@ interface NoteCardProps {
   onToggleDelete: (id: string) => void;
 }
 
+function shapeFor(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return hash % 6;
+}
+
+function formatStamp(timestamp: number): string {
+  const d = new Date(timestamp);
+  const now = new Date();
+  const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
+  const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const sameYear = d.getFullYear() === now.getFullYear();
+  const sameMonth = sameYear && d.getMonth() === now.getMonth();
+
+  let day = `${weekday} ${d.getDate()}`;
+  if (!sameMonth) day += ` ${d.toLocaleDateString('en-US', { month: 'short' })}`;
+  if (!sameYear) day += ` ${d.getFullYear()}`;
+
+  return `${day} · ${time}`;
+}
+
 export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isTrash = view === 'trash';
@@ -19,6 +40,7 @@ export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) 
   return (
     <div
       className={styles.card}
+      data-shape={shapeFor(note.id)}
       style={{ backgroundColor: noteColorVar(note.color) }}
       onClick={() => {
         if (!isTrash && !note.deleted) {
@@ -27,7 +49,7 @@ export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) 
       }}
     >
       <div className={styles.topRow}>
-        <span className={styles.date}>{note.date}</span>
+        <span className={styles.date}>{formatStamp(note.timestamp)}</span>
 
         <div className={styles.menuWrapper} tabIndex={0} onBlur={() => setMenuOpen(false)}>
           <button
@@ -74,14 +96,7 @@ export function NoteCard({ note, view, onOpen, onToggleDelete }: NoteCardProps) 
         </p>
       )}
 
-      <div className={styles.divider} />
-
       <p className={styles.body}>{note.body}</p>
-
-      <div className={styles.footer}>
-        <Clock size={14} />
-        <span>{note.time}</span>
-      </div>
     </div>
   );
 }

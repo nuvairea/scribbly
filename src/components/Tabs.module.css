@@ -2,8 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  margin: -18px 0 18px;
+  gap: 12px;
+  margin: 28px 0 24px;
 }
 
 .tabs {
@@ -43,50 +43,45 @@
 }
 
 .tab {
-  --tab-pad: 12px;
   position: relative;
   flex-shrink: 0;
   white-space: nowrap;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 8px var(--tab-pad);
+  padding: 11px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
   font-size: 14px;
+  font-weight: 500;
   font-family: var(--font-family-base);
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
+  cursor: pointer;
   transition: color 0.15s;
 }
 
 .tabActive {
-  color: var(--color-text-primary);
-  font-weight: 600;
+  color: var(--color-bg-surface);
 }
 
-.underline {
+.pill {
   position: absolute;
-  left: var(--tab-pad);
-  right: var(--tab-pad);
-  bottom: 0;
-  height: 2px;
-  border-radius: var(--radius-sm);
+  inset: 0;
+  border-radius: var(--radius-lg);
   background: var(--color-text-primary);
+}
+
+.tabLabel {
+  position: relative;
 }
 
 .dateNav {
   flex-shrink: 0;
 }
 
-.monthLabel {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-}
-
 @media (max-width: 640px) {
-  .tabs {
-    gap: 0;
+  .tabsRow {
+    margin: 22px 0 20px;
   }
 
   .tab {
-    --tab-pad: 8px;
+    padding: 10px 16px;
   }
 }
