@@ -14,11 +14,11 @@
   --sm-danger-border: color-mix(in srgb, var(--color-danger) 40%, transparent);
   --sm-danger-bg: color-mix(in srgb, var(--color-danger) 8%, transparent);
 
-  width: min(1024px, calc(100vw - 35px));
+  width: min(640px, calc(100vw - 35px));
   max-height: min(600px, calc(100vh - 35px));
   height: auto;
   max-width: none;
-  padding: 15px 24px;
+  padding: 20px 28px 24px;
   border-radius: var(--radius-md);
   overflow-y: auto;
   display: block;
@@ -45,8 +45,9 @@
 
 .title {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .closeButton {
@@ -101,15 +102,16 @@
 .themeToggle {
   display: flex;
   gap: 2px;
-  border-radius: var(--radius-sm);
+  padding: 4px;
+  border-radius: var(--radius-lg);
   background: var(--color-bg-selected);
 }
 
 .themeOption {
-  height: 40px;
+  height: 36px;
   padding: 0 14px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   background: transparent;
   color: var(--color-text-secondary);
   font: inherit;
@@ -131,10 +133,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 40px;
-  padding: 0 16px;
+  min-height: 44px;
+  padding: 0 20px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   background: transparent;
   color: inherit;
   font: inherit;
@@ -231,7 +233,7 @@
 }
 
 .confirmBox {
-  padding: 14px;
+  padding: 18px 20px;
   border: 1px solid var(--sm-danger-border);
   border-radius: var(--radius-md);
   background: var(--sm-danger-bg);
@@ -248,9 +250,9 @@
   box-sizing: border-box;
   width: 100%;
   height: 44px;
-  padding: 0 18px;
+  padding: 0 20px;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   background: var(--color-bg-surface);
   color: var(--color-text-primary);
   font: inherit;
@@ -271,4 +273,4 @@
 
 .confirmActions .actionButton {
   flex: 1;
-}
+  }
