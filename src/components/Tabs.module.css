@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: 28px 0 24px;
+  margin: 0 0 24px;
 }
 
 .tabs {
@@ -78,7 +78,7 @@
 
 @media (max-width: 640px) {
   .tabsRow {
-    margin: 22px 0 20px;
+    margin: 0 0 20px;
   }
 
   .tab {
