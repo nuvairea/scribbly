@@ -8,7 +8,7 @@ import styles from './SettingsModal.module.css';
 type Theme = 'system' | 'light' | 'dark';
 
 const THEME_KEY = 'scribbly_theme';
-const APP_VERSION = 'Scribbly v3.0.0';
+const APP_VERSION = 'Scribbly v3.1.0';
 
 function applyTheme(theme: Theme) {
   if (theme === 'system') {
