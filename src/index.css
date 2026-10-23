@@ -117,7 +117,7 @@ button {
     --color-overlay: rgba(8, 8, 8, 0.65);
     --color-danger: #f0794a;
 
-    --color-dock: #0b0c0a;
+    --color-dock: #242524;
     --color-dock-active: rgba(236, 239, 233, 0.14);
     --color-accent: #bbec4c;
   }
@@ -174,7 +174,7 @@ button {
   --color-overlay: rgba(8, 8, 8, 0.65);
   --color-danger: #f0794a;
 
-  --color-dock: #0b0c0a;
+  --color-dock: #242524;
   --color-dock-active: rgba(236, 239, 233, 0.14);
   --color-accent: #bbec4c;
 }
