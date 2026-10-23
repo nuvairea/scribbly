@@ -43,7 +43,6 @@
 }
 
 .tab {
-  position: relative;
   flex-shrink: 0;
   white-space: nowrap;
   padding: 11px 20px;
@@ -54,22 +53,14 @@
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
   cursor: pointer;
-  transition: color 0.15s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .tabActive {
-  color: var(--color-bg-surface);
-}
-
-.pill {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-lg);
   background: var(--color-text-primary);
-}
-
-.tabLabel {
-  position: relative;
+  color: var(--color-bg-surface);
 }
 
 .dateNav {
