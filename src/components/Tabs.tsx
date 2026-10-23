@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { motion } from 'motion/react';
 import { DateNav } from './DateNav';
 import type { MonthPosition } from '../lib/NoteQueries';
 import { useScrollFade } from '../hooks/useScrollFade';
@@ -19,8 +18,6 @@ const tabs = [
   { id: 'month', label: 'This month' },
 ];
 
-const PILL_TRANSITION = { type: 'spring', duration: 0.22, bounce: 0 } as const;
-
 export function Tabs({ tab, onTabChange, month, onMonthChange, monthBounds }: TabsProps) {
   const scrollRef = useScrollFade<HTMLDivElement>('x');
 
@@ -32,7 +29,7 @@ export function Tabs({ tab, onTabChange, month, onMonthChange, monthBounds }: Ta
 
   return (
     <div className={styles.tabsRow}>
-      <motion.div layoutScroll ref={scrollRef} className={styles.tabs}>
+      <div ref={scrollRef} className={styles.tabs}>
         {tabs.map(({ id, label }) => (
           <button
             key={id}
@@ -41,11 +38,10 @@ export function Tabs({ tab, onTabChange, month, onMonthChange, monthBounds }: Ta
             aria-current={tab === id ? 'true' : undefined}
             onClick={() => onTabChange(id)}
           >
-            {tab === id && <motion.span layoutId='tab-pill' className={styles.pill} transition={PILL_TRANSITION} />}
-            <span className={styles.tabLabel}>{label}</span>
+            {label}
           </button>
         ))}
-      </motion.div>
+      </div>
       {tab === 'month' && (
         <div className={styles.dateNav}>
           <DateNav month={month} onChange={onMonthChange} bounds={monthBounds} />
