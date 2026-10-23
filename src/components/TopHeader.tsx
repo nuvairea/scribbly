@@ -47,11 +47,11 @@ function getGreeting(): string {
 function getHeadline(view: 'notes' | 'trash', notesCount: number, todayCount: number, trashCount: number) {
   if (view === 'trash') {
     return trashCount === 0
-      ? { main: 'Trash is empty.', rest: '' }
+      ? { main: '0 in trash.', rest: '' }
       : { main: `${trashCount} in trash`, rest: ', gone after 7 days.' };
   }
 
-  if (notesCount === 0) return { main: 'No notes yet.', rest: '' };
+  if (notesCount === 0) return { main: '0 notes.', rest: '' };
 
   return {
     main: `${notesCount} ${notesCount === 1 ? 'note' : 'notes'}`,
