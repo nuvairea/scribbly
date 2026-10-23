@@ -141,7 +141,16 @@ export function SettingsModal({
                     className={`${styles.themeOption} ${theme === option ? styles.themeOptionActive : ''}`}
                     onClick={() => setTheme(option)}
                   >
-                    {option === 'system' ? 'System' : option === 'light' ? 'Light' : 'Dark'}
+                    {theme === option && (
+                      <motion.span
+                        layoutId='theme-pill'
+                        className={styles.themePill}
+                        transition={{ type: 'spring', duration: 0.22, bounce: 0 }}
+                      />
+                    )}
+                    <span className={styles.themeLabel}>
+                      {option === 'system' ? 'System' : option === 'light' ? 'Light' : 'Dark'}
+                    </span>
                   </button>
                 ))}
               </div>
