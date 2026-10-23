@@ -19,7 +19,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 18px;
+  height: 48px;
+  padding: 0 18px;
   border-radius: var(--radius-lg);
   color: rgb(251 252 249 / 65%);
   font-size: 14px;
@@ -65,7 +66,7 @@
 
 @media (max-width: 520px) {
   .item {
-    padding: 12px 14px;
+    padding: 0 14px;
 
     &:not([data-active='true']) .label {
       display: none;
