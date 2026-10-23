@@ -53,9 +53,6 @@
   font-family: var(--font-family-base);
   color: var(--color-text-primary);
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
 }
 
 .tabActive {
