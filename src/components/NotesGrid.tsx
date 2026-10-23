@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNotes } from '../hooks/useNotes';
 import { useToast } from '../hooks/useToast';
 import { NoteCard } from './NoteCard';
-import { CircleCheck, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import type { Note } from '../types/note';
 import type { MonthPosition } from '../lib/NoteQueries';
 import styles from './NotesGrid.module.css';
@@ -72,7 +72,6 @@ export function NotesGrid({ view, search = '', tab = 'all', month, onOpenNote, o
   const emptyState =
     view === 'trash' ? (
       <>
-        <CircleCheck className={styles.emptyIcon} aria-hidden='true' />
         <h2>Trash is empty</h2>
         <p>Deleted notes stay here for 7 days before they disappear forever.</p>
         <button type='button' className={styles.emptyAction} onClick={() => onViewChange('notes')}>
