@@ -108,6 +108,7 @@
 }
 
 .themeOption {
+  position: relative;
   height: 36px;
   padding: 0 14px;
   border: none;
@@ -123,9 +124,19 @@
 }
 
 .themeOptionActive {
-  background: var(--color-card-action-bg);
   color: var(--color-card-action-color);
   font-weight: 600;
+}
+
+.themePill {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: var(--color-card-action-bg);
+}
+
+.themeLabel {
+  position: relative;
 }
 
 .actionButton {
@@ -273,4 +284,4 @@
 
 .confirmActions .actionButton {
   flex: 1;
-  }
+}
