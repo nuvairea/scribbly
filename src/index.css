@@ -95,18 +95,17 @@ button {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg-page: #172821;
-    --color-bg-page: #172821;
-    --color-bg-surface: #2c3c35;
-    --color-bg-muted: #172821;
-    --color-bg-selected: #36463e;
-    --color-bg-search: #2c3c35;
-    --color-border: #394640;
-    --color-bg-modal: #0e1a15;
-    --color-text-primary: #eaf1e9;
-    --color-text-secondary: #b4c1ba;
-    --color-bg-mobile: #2c3c35;
-    --color-search-mobile: #2c3c35;
+    --color-bg-page: #171917;
+    --color-bg-surface: #222422;
+    --color-bg-muted: #111311;
+    --color-bg-selected: #2e302e;
+    --color-bg-search: #222422;
+    --color-border: #434542;
+    --color-bg-modal: #2a2c2a;
+    --color-text-primary: #ecefe9;
+    --color-text-secondary: #b4b7b2;
+    --color-bg-mobile: #222422;
+    --color-search-mobile: #222422;
 
     --color-avatar-bg: #bbec4c;
     --color-avatar-text: #091a11;
@@ -114,12 +113,12 @@ button {
     --color-card-action-bg: #bbec4c;
     --color-card-action-color: #091a11;
 
-    --color-shadow: rgba(3, 14, 10, 0.55);
-    --color-overlay: rgba(3, 14, 10, 0.65);
+    --color-shadow: rgba(3, 4, 3, 0.55);
+    --color-overlay: rgba(8, 8, 8, 0.65);
     --color-danger: #f0794a;
 
-    --color-dock: #030e0a;
-    --color-dock-active: rgba(234, 241, 233, 0.14);
+    --color-dock: #0b0c0a;
+    --color-dock-active: rgba(236, 239, 233, 0.14);
     --color-accent: #bbec4c;
   }
 }
@@ -153,17 +152,17 @@ button {
 }
 
 :root[data-theme='dark'] {
-  --color-bg-page: #172821;
-  --color-bg-surface: #2c3c35;
-  --color-bg-muted: #172821;
-  --color-bg-selected: #36463e;
-  --color-bg-search: #2c3c35;
-  --color-border: #394640;
-  --color-bg-modal: #0e1a15;
-  --color-text-primary: #eaf1e9;
-  --color-text-secondary: #b4c1ba;
-  --color-bg-mobile: #2c3c35;
-  --color-search-mobile: #2c3c35;
+  --color-bg-page: #171917;
+  --color-bg-surface: #222422;
+  --color-bg-muted: #111311;
+  --color-bg-selected: #2e302e;
+  --color-bg-search: #222422;
+  --color-border: #434542;
+  --color-bg-modal: #2a2c2a;
+  --color-text-primary: #ecefe9;
+  --color-text-secondary: #b4b7b2;
+  --color-bg-mobile: #222422;
+  --color-search-mobile: #222422;
 
   --color-avatar-bg: #bbec4c;
   --color-avatar-text: #091a11;
@@ -171,11 +170,11 @@ button {
   --color-card-action-bg: #bbec4c;
   --color-card-action-color: #091a11;
 
-  --color-shadow: rgba(3, 14, 10, 0.55);
-  --color-overlay: rgba(3, 14, 10, 0.65);
+  --color-shadow: rgba(3, 4, 3, 0.55);
+  --color-overlay: rgba(8, 8, 8, 0.65);
   --color-danger: #f0794a;
 
-  --color-dock: #030e0a;
-  --color-dock-active: rgba(234, 241, 233, 0.14);
+  --color-dock: #0b0c0a;
+  --color-dock-active: rgba(236, 239, 233, 0.14);
   --color-accent: #bbec4c;
 }
