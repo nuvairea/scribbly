@@ -61,7 +61,7 @@ function getHeadline(view: 'notes' | 'trash', notesCount: number, todayCount: nu
 
 function getShortcutHint(): string | null {
   const hasKeyboard = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (!hasKeyboard) return 'Search';
+  if (!hasKeyboard) return null;
 
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
   const platform = nav.userAgentData?.platform ?? navigator.platform;
