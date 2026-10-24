@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
@@ -36,6 +36,14 @@ function NoteEditor({ note, onClose }: Omit<NoteEditorModalProps, 'open'>) {
   const [placeholder] = useState(() => PLACEHOLDERS[Math.floor(Math.random() * PLACEHOLDERS.length)]);
   const titleRef = useScrollFade<HTMLInputElement>('x');
   const bodyRef = useScrollFade<HTMLTextAreaElement>('y');
+
+  useLayoutEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [body, bodyRef]);
 
   const handleDone = () => {
     const isEmpty = title.trim() === '' && body.trim() === '';
