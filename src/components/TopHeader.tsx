@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { CloudAlert, CloudCheck, CloudOff, CloudSync, Search, type LucideIcon } from 'lucide-react';
 import styles from './TopHeader.module.css';
 
@@ -59,6 +59,15 @@ function getHeadline(view: 'notes' | 'trash', notesCount: number, todayCount: nu
   };
 }
 
+function getShortcutHint(): string | null {
+  const hasKeyboard = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!hasKeyboard) return 'Search';
+
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
+  const platform = nav.userAgentData?.platform ?? navigator.platform;
+  return /mac/i.test(platform) ? '⌘K' : 'Ctrl K';
+}
+
 export function TopHeader({
   view,
   userName,
@@ -76,6 +85,21 @@ export function TopHeader({
   const [imgFailed, setImgFailed] = useState(false);
   const initial = (userName ?? 'Guest').charAt(0).toUpperCase();
   const headline = getHeadline(view, notesCount, todayCount, trashCount);
+
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [shortcutHint] = useState(getShortcutHint);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        searchRef.current?.focus();
+        searchRef.current?.select();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   return (
     <header className={styles.header}>
@@ -99,12 +123,14 @@ export function TopHeader({
         <label className={styles.search}>
           <Search size={18} aria-hidden='true' />
           <input
+            ref={searchRef}
             type='search'
             aria-label='Search notes'
             placeholder='Search'
             value={searchValue}
             onChange={(event) => onSearchChange(event.target.value)}
           />
+          {shortcutHint && !searchValue && <kbd className={styles.shortcut}>{shortcutHint}</kbd>}
         </label>
       </div>
 
