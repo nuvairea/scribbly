@@ -314,6 +314,19 @@ function Dashboard({
     setEditorOpen(true);
   };
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.metaKey || event.ctrlKey || event.altKey || event.key.toLowerCase() !== 'n') return;
+      if (editorOpen || settingsOpen) return;
+      if ((event.target as HTMLElement).closest('input, textarea, [contenteditable="true"]')) return;
+      event.preventDefault();
+      openNewNote();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [editorOpen, settingsOpen]);
+
   const openExistingNote = (note: Note) => {
     if (note.deleted) {
       return;
