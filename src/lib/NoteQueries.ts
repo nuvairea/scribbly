@@ -25,14 +25,8 @@ export function filterNotes(notes: Note[], isDeleted: boolean, search = '', tab 
       if (isDeleted || hasSearch) return true;
 
       const noteDate = new Date(note.timestamp);
-      const target = viewedMonth ?? {
-        month: now.getMonth(),
-        year: now.getFullYear()
-      };
 
-      if (noteDate.getMonth() !== target.month || noteDate.getFullYear() !== target.year) {
-        return false;
-      }
+      if (tab === 'all') return true;
 
       if (tab === 'today') {
         return noteDate.toDateString() === now.toDateString();
@@ -44,11 +38,12 @@ export function filterNotes(notes: Note[], isDeleted: boolean, search = '', tab 
         return diffDays <= 7;
       }
 
-      if (tab === 'month') {
-        return true;
-      }
+      const target = viewedMonth ?? {
+        month: now.getMonth(),
+        year: now.getFullYear()
+      };
 
-      return true;
+      return noteDate.getMonth() === target.month && noteDate.getFullYear() === target.year;
     }).sort((a, b) => b.timestamp - a.timestamp);
 }
 
