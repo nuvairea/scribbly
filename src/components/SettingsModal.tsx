@@ -66,6 +66,16 @@ export function SettingsModal({
     onClose();
   };
 
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.isComposing) return;
+      handleClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  });
+
   const handleConfirmDelete = () => {
     if (!canDelete) return;
     onDeleteAccount();
