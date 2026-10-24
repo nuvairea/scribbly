@@ -24,6 +24,8 @@ Scribbly lets you create, edit, and color-tag notes, search across your notes, a
 
 You can sign in with Google or continue as a guest. Signed-in users can automatically sync their notes, while offline changes are saved locally and retried automatically when a connection is available.
 
+The editor grows with your note, so long notes stay easy to write and read. On desktop, press `Ctrl K` (`⌘K` on Mac) to jummp to search and `N` to start a new note.
+
 Scribbly also includes light and dark themes with system preference support, and installs as a PWA that works offline.
 
 Account and data management is available from Settings, including exporting notes as JSON, permanently clearing the trash, and deleting your account.
