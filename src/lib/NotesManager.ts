@@ -3,6 +3,18 @@ import { request } from '../lib/api';
 import { filterNotes } from './NoteQueries';
 import type { MonthPosition } from './NoteQueries';
 
+function readJSON<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) {
+      return fallback;
+    }
+    return (JSON.parse(raw) as T) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export class NotesManager {
   notes: Note[] = [];
   pendingCache: Note[] = [];
@@ -12,23 +24,35 @@ export class NotesManager {
   localMigrationDone: boolean = false;
 
   private onChange?: () => void;
+  private inFlight = new Set<string>();
+  private syncEpoch = 0;
+  private hydrating = false;
+  private isRefreshing = false;
+  private lastRefreshAt = 0;
+  private pendingDeletes: string[] = [];
+  private isFlushingDeletes = false;
 
   constructor() {
     this.localMigrationDone = Boolean(localStorage.getItem('scribbly_migration_done'));
 
-    const lastSession = JSON.parse(localStorage.getItem('scribbly_last_session') || 'null');
+    const lastSession = readJSON<{ userId?: string } | null>('scribbly_last_session', null);
 
-    if (lastSession) {
+    if (lastSession?.userId) {
       this.userId = lastSession.userId;
       this.notes = this.loadSyncedNotes(lastSession.userId) || [];
+      this.loadPendingDeletes();
     } else {
       this.loadLocalNotes();
     }
 
     this.cleanupTrash();
-    this.pendingCache = JSON.parse(localStorage.getItem('scribbly_pending_cache') || '[]');
+    const storedPending = readJSON<unknown>('scribbly_pending_cache', []);
+    this.pendingCache = Array.isArray(storedPending) ? storedPending : [];
 
-    window.addEventListener('online', () => this.flushPendingSync());
+    window.addEventListener('online', () => {
+      void this.flushPendingSync();
+      void this.flushPendingDeletes();
+    });
   }
 
   private normalizeNote(note: Partial<Note> & { _id?: string | number }): Note {
@@ -61,15 +85,15 @@ export class NotesManager {
       this.notes = [];
       this.seedWelcomeNote();
     } else {
-      const parsed = JSON.parse(stored) || [];
+      const parsed = readJSON<unknown>('scribbly_local_notes', []);
       this.notes = Array.isArray(parsed)
         ? parsed.map((note) => this.normalizeNote(note)) : [];
     }
   }
 
   private loadSyncedNotes(userId: string | number) {
-    const cached = localStorage.getItem(`scribbly_synced_notes_${userId}`);
-    return cached ? JSON.parse(cached) : null;
+    const cached = readJSON<unknown>(`scribbly_synced_notes_${userId}`, null);
+    return Array.isArray(cached) ? (cached as Note[]) : null;
   }
 
   public seedWelcomeNote(): void {
@@ -114,39 +138,177 @@ export class NotesManager {
     return newNote;
   }
 
+  private toPayload(note: Note): Partial<Note> {
+    const payload: Partial<Note> = { ...note };
+    delete payload.pendingSync;
+    delete payload.pendingOp;
+    delete payload.syncAttempts;
+    delete payload.syncError;
+    return payload;
+  }
+
+  private async sendNote(note: Note, op: PendingOp) {
+    const trashRequest = () => request<{ note: Note }>(`/notes/${note.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ deleted: note.deleted, deletedAt: note.deletedAt }),
+    });
+
+    if (op === 'trash') {
+      return trashRequest();
+    }
+
+    if (op === 'create') {
+      return request<{ note: Note }>('/notes', {
+        method: 'POST',
+        body: JSON.stringify(this.toPayload(note)),
+      });
+    }
+
+    const updated = await request<{ note: Note }>(`/notes/${note.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(this.toPayload(note)),
+    });
+
+    // edited and trashed/restored before syncing: content goes first, then the delete state
+    if (op === 'update_trash' && updated.ok) {
+      return trashRequest();
+    }
+
+    return updated;
+  }
+
+  private replaceNote(note: Note): void {
+    this.notes = this.notes.map((entry) => entry.id === note.id ? note : entry);
+  }
+
   private async syncNote(note: Note): Promise<void> {
-    const op = note.pendingOp ?? 'create';
+    if (this.inFlight.has(note.id)) {
+      return;
+    }
+    this.inFlight.add(note.id);
 
-    const result = op === 'trash'
-      ? await request<{ note: Note }>(`/notes/${note.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ deleted: note.deleted, deletedAt: note.deletedAt }),
-      })
-      : await request<{ note: Note }>(
-        op === 'update' ? `/notes/${note.id}` : '/notes',
-        {
-          method: op === 'create' ? 'POST' : 'PUT',
-          body: JSON.stringify(note),
-        }
-      );
+    let outcome: { resend: Note | null; removed: boolean };
+    try {
+      outcome = await this.pushNote(note);
+    } finally {
+      this.inFlight.delete(note.id);
+    }
 
-    if (!result.ok) {
-      if (result.status !== 0) {
-        this.markSyncFailure(note, op);
+    if (outcome.resend) {
+      void this.syncNote(outcome.resend);
+    }
+    if (outcome.removed) {
+      void this.flushPendingDeletes();
+    }
+  }
+
+  private async pushNote(note: Note): Promise<{ resend: Note | null; removed: boolean }> {
+    const op: PendingOp = note.pendingOp ?? 'create';
+    const result = await this.sendNote(note, op);
+
+    const current = this.notes.find((entry) => entry.id === note.id);
+    if (!current) {
+      // removed locally while sending (trash emptied), so its server copy may still need cleaning up
+      return { resend: null, removed: true };
+    }
+    const editedMeanwhile = current !== note;
+
+    if (!result.ok || !result.data.note) {
+      if (!editedMeanwhile && (result.ok || result.status !== 0)) {
+        this.markSyncFailure(current, op);
       }
       this.save();
-      return;
+      return { resend: null, removed: false };
     }
 
-    if (!result.data.note) {
-      this.markSyncFailure(note, op);
-      this.save();
-      return;
-    }
-
+    this.syncEpoch += 1;
     const serverNote = this.normalizeNote(result.data.note);
-    this.notes = [serverNote, ...this.notes.filter((entry) => entry.id !== serverNote.id)];
+    let resend: Note | null = null;
+
+    if (!editedMeanwhile) {
+      this.replaceNote(serverNote);
+    } else if (current.pendingSync) {
+      // the server has the note now, so a pending 'create' has to become an 'update'
+      const next: Note = current.pendingOp === 'create'
+        ? { ...current, pendingOp: 'update' }
+        : current;
+      this.replaceNote(next);
+      resend = next;
+    }
+
     this.save();
+    return { resend, removed: false };
+  }
+
+  private pendingDeletesKey(): string | null {
+    return this.userId ? `scribbly_pending_deletes_${this.userId}` : null;
+  }
+
+  private loadPendingDeletes(): void {
+    const key = this.pendingDeletesKey();
+    const stored = key ? readJSON<unknown>(key, []) : [];
+    this.pendingDeletes = Array.isArray(stored)
+      ? stored.filter((id): id is string => typeof id === 'string')
+      : [];
+  }
+
+  private savePendingDeletes(): void {
+    const key = this.pendingDeletesKey();
+    if (!key) {
+      return;
+    }
+    if (this.pendingDeletes.length > 0) {
+      localStorage.setItem(key, JSON.stringify(this.pendingDeletes));
+    } else {
+      localStorage.removeItem(key);
+    }
+  }
+
+  private dropPendingDeletes(notes: Note[]): Note[] {
+    if (this.pendingDeletes.length === 0) {
+      return notes;
+    }
+    const gone = new Set(this.pendingDeletes);
+    return notes.filter((note) => !gone.has(note.id));
+  }
+
+  private async flushPendingDeletes(): Promise<void> {
+    if (this.isFlushingDeletes || !this.isAuthenticated || this.pendingDeletes.length === 0) {
+      return;
+    }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return;
+    }
+
+    this.isFlushingDeletes = true;
+    try {
+      for (const id of [...this.pendingDeletes]) {
+        // still being created or trashed on the server, retried when that request finishes
+        if (this.inFlight.has(id)) {
+          continue;
+        }
+
+        // the server only deletes trashed notes and this one's trash may not have synced yet,
+        // so trash it first (404 means it's already gone)
+        const trashed = await request(`/notes/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ deleted: true, deletedAt: Date.now() }),
+        });
+
+        let done = trashed.status === 404;
+        if (trashed.ok) {
+          const removed = await request(`/notes/${id}`, { method: 'DELETE' });
+          done = removed.ok || removed.status === 404;
+        }
+
+        if (done) {
+          this.pendingDeletes = this.pendingDeletes.filter((entry) => entry !== id);
+          this.savePendingDeletes();
+        }
+      }
+    } finally {
+      this.isFlushingDeletes = false;
+    }
   }
 
   private save(): void {
@@ -169,8 +331,12 @@ export class NotesManager {
 
   private savePendingCache(): void {
     const pending = this.notes.filter((note) => note.pendingSync || note.syncError);
-    if (pending.length > 0) {
-      localStorage.setItem('scribbly_pending_cache', JSON.stringify(pending));
+    const known = new Set(pending.map((note) => note.id));
+    // notes still waiting to be merged back after login must survive a save in between
+    const carried = this.pendingCache.filter((note) => !known.has(note.id));
+    const toStore = [...pending, ...carried];
+    if (toStore.length > 0) {
+      localStorage.setItem('scribbly_pending_cache', JSON.stringify(toStore));
     } else {
       localStorage.removeItem('scribbly_pending_cache');
     }
@@ -224,17 +390,17 @@ export class NotesManager {
       return;
     }
 
+    this.syncEpoch += 1;
     this.notes = this.notes.filter((note) => !note.deleted);
-    this.save();
 
     if (this.isAuthenticated) {
-      await Promise.all(trashedNotes.map(async (note) => {
-        const result = await request(`/notes/${note.id}`, { method: 'DELETE' });
-        if (!result.ok && result.status !== 404) {
-          console.error(`Failed to permanently delete note ${note.id}`, result.data);
-        }
-      }));
+      // remembered on disk so it still happens if we're offline or close the app first
+      this.pendingDeletes = [...new Set([...this.pendingDeletes, ...trashedNotes.map((note) => note.id)])];
+      this.savePendingDeletes();
     }
+
+    this.save();
+    await this.flushPendingDeletes();
   }
 
   public async deleteNote(id: string): Promise<Note | null> {
@@ -243,7 +409,7 @@ export class NotesManager {
       return null;
     }
 
-    if (this.isAuthenticated && note.pendingOp === 'create' && note.pendingSync) {
+    if (this.isAuthenticated && note.pendingOp === 'create' && !this.inFlight.has(id)) {
       this.notes = this.notes.filter((entry) => entry.id !== id);
       this.save();
       return null;
@@ -256,7 +422,7 @@ export class NotesManager {
       deleted: nextDeleted,
       deletedAt: nextDeletedAt,
       pendingSync: true,
-      pendingOp: 'trash',
+      pendingOp: note.pendingOp && note.pendingOp !== 'trash' ? 'update_trash' : 'trash',
     };
 
     this.notes = this.notes.map((entry) => entry.id === id ? updatedNote : entry);
@@ -283,40 +449,11 @@ export class NotesManager {
     try {
       const pending = this.notes.filter((note) => note.pendingSync);
 
-      for (const note of pending) {
-        let result;
-        const payload: Partial<Note> & {
-          pendingSync?: boolean;
-          pendingOp?: PendingOp | null;
-          syncError?: boolean;
-        } = { ...note };
-        delete payload.pendingSync;
-        delete payload.pendingOp;
-        delete payload.syncError;
-
-        if (note.pendingOp === 'trash') {
-          result = await request<{ note: Note }>(`/notes/${note.id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ deleted: note.deleted, deletedAt: note.deletedAt }),
-          });
-        } else if (note.pendingOp === 'update') {
-          result = await request<{ note: Note }>(`/notes/${note.id}`, {
-            method: 'PUT',
-            body: JSON.stringify(payload),
-          });
-        } else {
-          result = await request<{ note: Note }>('/notes', {
-            method: 'POST',
-            body: JSON.stringify(payload),
-          });
-        }
-
-        if (result.ok) {
-          const serverNote = this.normalizeNote(result.data.note);
-          this.notes = this.notes.map((entry) => entry.id === note.id ? serverNote : entry);
-        } else if (result.status !== 0) {
-          this.markSyncFailure(note, note.pendingOp);
-          this.notes = this.notes.map((entry) => entry.id === note.id ? note : entry);
+      for (const queued of pending) {
+        // re-read it: it may have been edited, synced or removed while earlier notes were sending
+        const latest = this.notes.find((entry) => entry.id === queued.id);
+        if (latest?.pendingSync) {
+          await this.syncNote(latest);
         }
       }
 
@@ -369,6 +506,7 @@ export class NotesManager {
 
     if (!isAuthenticated) {
       this.serverHydrated = false;
+      this.pendingDeletes = [];
 
       if (previousUserId) {
         this.clearAccountCache(previousUserId);
@@ -382,17 +520,27 @@ export class NotesManager {
 
     localStorage.setItem('scribbly_last_session', JSON.stringify({ userId }));
 
+    if (previousUserId !== userId) {
+      this.loadPendingDeletes();
+    }
+
     if (changed || !this.serverHydrated) {
-      await this.syncWithServer();
+      this.hydrating = true;
+      try {
+        await this.syncWithServer();
 
-      if (this.pendingCache.length > 0) {
-        this.pendingCache.forEach((pendingNote) => {
-          this.notes = [pendingNote, ...this.notes.filter((entry) => entry.id !== pendingNote.id)];
-        });
-        this.pendingCache = [];
+        if (this.pendingCache.length > 0) {
+          this.pendingCache.forEach((pendingNote) => {
+            this.notes = [pendingNote, ...this.notes.filter((entry) => entry.id !== pendingNote.id)];
+          });
+          this.pendingCache = [];
+        }
+
+        await this.flushPendingSync();
+        await this.flushPendingDeletes();
+      } finally {
+        this.hydrating = false;
       }
-
-      await this.flushPendingSync();
     }
   }
 
@@ -420,8 +568,9 @@ export class NotesManager {
         return;
       }
 
-      const serverNotes = (result.data.notes || []).map((note) => this.normalizeNote(note));
-      if (serverNotes.length > 0) {
+      const fetched = (result.data.notes || []).map((note) => this.normalizeNote(note));
+      const serverNotes = this.dropPendingDeletes(fetched);
+      if (fetched.length > 0) {
         this.notes = serverNotes;
         await this.cleanupTrash();
         this.serverHydrated = true;
@@ -431,8 +580,7 @@ export class NotesManager {
 
       const localSnapshot = this.notes.map((note) => ({ ...note }));
       if (localSnapshot.length > 0 && !this.localMigrationDone) {
-        await this.uploadLocalNotes(localSnapshot);
-        this.notes = localSnapshot;
+        this.notes = await this.uploadLocalNotes(localSnapshot);
         this.serverHydrated = true;
         this.save();
         return;
@@ -453,25 +601,83 @@ export class NotesManager {
     }
   }
 
-  private async uploadLocalNotes(notes: Note[]): Promise<void> {
+  private async uploadLocalNotes(notes: Note[]): Promise<Note[]> {
     if (!this.isAuthenticated || this.localMigrationDone) {
-      return;
+      return notes;
     }
 
+    const uploaded: Note[] = [];
+
     for (const note of notes) {
-      const payload = {
+      const withId: Note = {
         ...note,
         id: note.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
       };
 
-      await request('/notes', {
+      const result = await request('/notes', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(this.toPayload(withId)),
       });
+
+      if (result.ok) {
+        uploaded.push({ ...withId, pendingSync: false, pendingOp: null, syncAttempts: 0, syncError: false });
+      } else {
+        // not on the server yet, so leave it queued and let the normal flush retry it
+        uploaded.push({ ...withId, pendingSync: true, pendingOp: 'create' });
+      }
     }
 
     this.localMigrationDone = true;
     localStorage.setItem('scribbly_migration_done', 'true');
+    return uploaded;
+  }
+
+  public async refreshFromServer(minIntervalMs = 15000): Promise<void> {
+    if (!this.isAuthenticated || this.hydrating || this.isRefreshing || this.isFlushingSync) {
+      return;
+    }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return;
+    }
+    if (Date.now() - this.lastRefreshAt < minIntervalMs) {
+      return;
+    }
+
+    this.isRefreshing = true;
+    this.lastRefreshAt = Date.now();
+    const epochAtStart = this.syncEpoch;
+
+    try {
+      const result = await request<{ notes: Note[] }>('/notes');
+      if (!result.ok) {
+        return;
+      }
+
+      // a push or trash-empty finished while we were fetching, so this snapshot may be stale
+      if (this.syncEpoch !== epochAtStart) {
+        this.lastRefreshAt = 0;
+        return;
+      }
+
+      const serverNotes = this.dropPendingDeletes((result.data.notes || []).map((note) => this.normalizeNote(note)));
+      const serverIds = new Set(serverNotes.map((note) => note.id));
+
+      // local edits that haven't reached the server yet always win
+      const protectedNotes = this.notes.filter((note) => note.pendingSync || note.syncError);
+      const protectedById = new Map(protectedNotes.map((note) => [note.id, note]));
+
+      const merged = serverNotes.map((note) => protectedById.get(note.id) ?? note);
+      const localOnly = protectedNotes.filter((note) => !serverIds.has(note.id));
+
+      this.notes = [...localOnly, ...merged];
+      this.serverHydrated = true;
+      await this.cleanupTrash();
+      this.save();
+    } catch (error) {
+      console.error('Failed to refresh notes', error);
+    } finally {
+      this.isRefreshing = false;
+    }
   }
 
   public setOnChange(callback: () => void): void {
