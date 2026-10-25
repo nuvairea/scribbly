@@ -29,6 +29,21 @@ export function NotesProvider({ children }: { children: ReactNode }) {
     setNotes([...managerRef.current!.notes]);
   }, []);
 
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') {
+        void managerRef.current!.refreshFromServer();
+      }
+    };
+
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
+
   const addNote = useCallback(
     (...args: Parameters<NotesManager['addNote']>) => managerRef.current!.addNote(...args),
     [],
