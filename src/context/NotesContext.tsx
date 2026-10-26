@@ -9,6 +9,7 @@ export interface NotesContextValue {
   deleteNote: NotesManager['deleteNote'];
   emptyTrash: NotesManager['emptyTrash'];
   getNotes: NotesManager['getNotes'];
+  hasUnsyncedNotes: NotesManager['hasUnsyncedNotes'];
   setAuthContext: NotesManager['setAuthContext'];
 }
 
@@ -61,14 +62,18 @@ export function NotesProvider({ children }: { children: ReactNode }) {
     (...args: Parameters<NotesManager['getNotes']>) => managerRef.current!.getNotes(...args),
     [],
   );
+  const hasUnsyncedNotes = useCallback(
+    () => managerRef.current!.hasUnsyncedNotes(),
+    [],
+  );
   const setAuthContext = useCallback(
     (...args: Parameters<NotesManager['setAuthContext']>) => managerRef.current!.setAuthContext(...args),
     [],
   );
 
   const value = useMemo<NotesContextValue>(
-    () => ({ notes, addNote, updateNote, deleteNote, emptyTrash, getNotes, setAuthContext }),
-    [notes, addNote, updateNote, deleteNote, emptyTrash, getNotes, setAuthContext],
+    () => ({ notes, addNote, updateNote, deleteNote, emptyTrash, getNotes, hasUnsyncedNotes, setAuthContext }),
+    [notes, addNote, updateNote, deleteNote, emptyTrash, getNotes, hasUnsyncedNotes, setAuthContext],
   );
 
   return <NotesContext.Provider value={value}>{children}</NotesContext.Provider>;
