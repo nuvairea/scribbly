@@ -148,12 +148,12 @@ function AppContent() {
   };
 
   const handleLogout = async () => {
-    if (hasUnsyncedNotes() && !window.confirm("Some notes haven't synced and will be lost.")) {
+    if (isOffline()) {
+      showToast('Go online to log out');
       return;
     }
 
-    if (isOffline()) {
-      showToast('Go online to log out');
+    if (hasUnsyncedNotes() && !window.confirm("Some notes haven't synced and will be lost.")) {
       return;
     }
 
