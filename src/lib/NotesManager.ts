@@ -15,6 +15,10 @@ function readJSON<T>(key: string, fallback: T): T {
   }
 }
 
+function isTemporarySyncStatus(status: number): boolean {
+  return [0, 401, 429, 502, 503, 504].includes(status);
+}
+
 export class NotesManager {
   notes: Note[] = [];
   pendingCache: Note[] = [];
@@ -214,8 +218,12 @@ export class NotesManager {
     const editedMeanwhile = current !== note;
 
     if (!result.ok || !result.data.note) {
-      if (!editedMeanwhile && (result.ok || result.status !== 0)) {
-        this.markSyncFailure(current, op);
+      if (!editedMeanwhile) {
+        if (isTemporarySyncStatus(result.status)) {
+          current.pendingSync = true;
+        } else if (result.ok || result.status !== 0) {
+          this.markSyncFailure(current, op);
+        }
       }
       this.save();
       return { resend: null, removed: false };
@@ -409,12 +417,6 @@ export class NotesManager {
       return null;
     }
 
-    if (this.isAuthenticated && note.pendingOp === 'create' && !this.inFlight.has(id)) {
-      this.notes = this.notes.filter((entry) => entry.id !== id);
-      this.save();
-      return null;
-    }
-
     const nextDeleted = !note.deleted;
     const nextDeletedAt = nextDeleted ? Date.now() : null;
     const updatedNote: Note = {
@@ -422,7 +424,9 @@ export class NotesManager {
       deleted: nextDeleted,
       deletedAt: nextDeletedAt,
       pendingSync: true,
-      pendingOp: note.pendingOp && note.pendingOp !== 'trash' ? 'update_trash' : 'trash',
+      pendingOp: note.pendingOp === 'create' && !this.inFlight.has(id)
+        ? 'create'
+        : note.pendingOp && note.pendingOp !== 'trash' ? 'update_trash' : 'trash',
     };
 
     this.notes = this.notes.map((entry) => entry.id === id ? updatedNote : entry);
@@ -498,6 +502,10 @@ export class NotesManager {
     return filterNotes(this.notes, isDeleted, search, tab, viewedMonth);
   }
 
+  public hasUnsyncedNotes(): boolean {
+    return this.notes.some((note) => note.pendingSync || note.syncError);
+  }
+
   public async setAuthContext(isAuthenticated: boolean, userId: string | null = null): Promise<void> {
     const previousUserId = this.userId;
     const changed = this.isAuthenticated !== isAuthenticated || this.userId !== userId;
@@ -536,6 +544,12 @@ export class NotesManager {
           this.pendingCache = [];
         }
 
+        if (this.notes.some((note) => note.syncError)) {
+          this.notes = this.notes.map((note) => note.syncError
+            ? { ...note, pendingSync: true, syncAttempts: 0 }
+            : note);
+          this.save();
+        }
         await this.flushPendingSync();
         await this.flushPendingDeletes();
       } finally {
