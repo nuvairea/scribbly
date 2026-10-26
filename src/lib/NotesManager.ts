@@ -224,6 +224,9 @@ export class NotesManager {
         } else if (result.ok || result.status !== 0) {
           this.markSyncFailure(current, op);
         }
+      } else if (op === 'create' && (current.pendingOp === 'update_trash' || current.pendingOp === 'trash')) {
+        // the create never landed, so the note still needs a create (it carries the trash flag)
+        this.replaceNote({ ...current, pendingOp: 'create' });
       }
       this.save();
       return { resend: null, removed: false };
