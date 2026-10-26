@@ -45,7 +45,7 @@ function readCachedUser(): User | null {
 function AppContent() {
   const [authState, setAuthState] = useState<AuthState>('loading');
   const [user, setUser] = useState<User | null>(null);
-  const { setAuthContext } = useNotes();
+  const { hasUnsyncedNotes, setAuthContext } = useNotes();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -148,6 +148,10 @@ function AppContent() {
   };
 
   const handleLogout = async () => {
+    if (hasUnsyncedNotes() && !window.confirm("Some notes haven't synced and will be lost.")) {
+      return;
+    }
+
     if (isOffline()) {
       showToast('Go online to log out');
       return;
