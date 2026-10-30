@@ -13,8 +13,9 @@ import { ToastProvider } from './context/ToastProvider';
 import { getMonthBounds, type MonthPosition } from './lib/NoteQueries';
 import { checkSession, deleteAccount, loginWithGoogle, logout, type User } from './lib/auth';
 import { NoteEditorModal } from './components/NoteEditorModal';
-import { SettingsModal } from './components/SettingsModal';
+import { SettingsView } from './components/SettingsView';
 import type { Note } from './types/note';
+import type { View } from './types/view';
 import { isOffline } from './lib/api';
 
 type AuthState = 'loading' | 'auth' | 'notes';
@@ -234,10 +235,9 @@ function Dashboard({
   onLoginPrompt: () => void;
 }) {
   const { notes } = useNotes();
-  const [view, setView] = useState<'notes' | 'trash'>('notes');
+  const [view, setView] = useState<View>('notes');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
-  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [selectedMonth, setSelectedMonth] = useState<MonthPosition>({
     month: new Date().getMonth(),
@@ -321,7 +321,7 @@ function Dashboard({
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey || event.key.toLowerCase() !== 'n') return;
-      if (editorOpen || settingsOpen) return;
+      if (editorOpen) return;
       if ((event.target as HTMLElement).closest('input, textarea, [contenteditable="true"]')) return;
       event.preventDefault();
       openNewNote();
@@ -329,7 +329,7 @@ function Dashboard({
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editorOpen, settingsOpen]);
+  }, [editorOpen]);
 
   const openExistingNote = (note: Note) => {
     if (note.deleted) {
@@ -354,7 +354,7 @@ function Dashboard({
           onSearchChange={setSearchQuery}
           unsyncedCount={unsyncedCount}
           syncStatus={syncStatus}
-          onOpenSettings={() => setSettingsOpen(true)}
+          onOpenSettings={() => setView('settings')}
         />
 
         {view === 'notes' && (
@@ -367,34 +367,31 @@ function Dashboard({
           />
         )}
 
-        <NotesGrid
-          view={view}
-          search={searchQuery}
-          tab={selectedTab}
-          month={selectedMonth}
-          onOpenNote={openExistingNote}
-          onViewChange={setView}
-        />
+        {view === 'settings' ? (
+          <motion.div key='settings' {...FADE}>
+            <SettingsView
+              isGuest={!user}
+              userEmail={user?.email}
+              onLogout={onLogout}
+              onDeleteAccount={onDeleteAccount}
+              onLoginPrompt={onLoginPrompt}
+            />
+          </motion.div>
+        ) : (
+          <NotesGrid
+            view={view}
+            search={searchQuery}
+            tab={selectedTab}
+            month={selectedMonth}
+            onOpenNote={openExistingNote}
+            onViewChange={setView}
+          />
+        )}
       </div>
 
-      <Dock
-        view={view}
-        onViewChange={setView}
-        onAddNote={openNewNote}
-        onOpenSettings={() => setSettingsOpen(true)}
-        trashCount={trashCount}
-      />
+      <Dock view={view} onViewChange={setView} onAddNote={openNewNote} trashCount={trashCount} />
 
       <NoteEditorModal open={editorOpen} note={editingNote} onClose={() => setEditorOpen(false)} />
-      <SettingsModal
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        isGuest={!user}
-        userEmail={user?.email}
-        onLogout={onLogout}
-        onDeleteAccount={onDeleteAccount}
-        onLoginPrompt={onLoginPrompt}
-      />
     </motion.div>
   );
 }
