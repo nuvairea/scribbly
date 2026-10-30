@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { CloudAlert, CloudCheck, CloudOff, CloudSync, Search, type LucideIcon } from 'lucide-react';
+import type { View } from '../types/view';
 import styles from './TopHeader.module.css';
 
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'failed';
 
 interface TopHeaderProps {
-  view: 'notes' | 'trash';
+  view: View;
   userName?: string;
   userPicture?: string;
   notesCount: number;
@@ -44,7 +45,9 @@ function getGreeting(): string {
   return 'Good evening';
 }
 
-function getHeadline(view: 'notes' | 'trash', notesCount: number, todayCount: number, trashCount: number) {
+function getHeadline(view: View, notesCount: number, todayCount: number, trashCount: number) {
+  if (view === 'settings') return { main: 'Settings', rest: '' };
+
   if (view === 'trash') {
     return trashCount === 0
       ? { main: '0 in trash.', rest: '' }
@@ -85,6 +88,8 @@ export function TopHeader({
   const [imgFailed, setImgFailed] = useState(false);
   const initial = (userName ?? 'Guest').charAt(0).toUpperCase();
   const headline = getHeadline(view, notesCount, todayCount, trashCount);
+  const showSearch = view !== 'settings';
+  const syncBadge = syncStatus !== null && SyncIcon !== null;
 
   const searchRef = useRef<HTMLInputElement>(null);
   const [shortcutHint] = useState(getShortcutHint);
@@ -113,26 +118,30 @@ export function TopHeader({
         </h1>
       </div>
 
-      <div className={styles.tools}>
-        {syncStatus && SyncIcon && (
-          <div role='status' className={`${styles.syncBadge} ${SYNC_CLASSES[syncStatus] ?? ''}`}>
-            <SyncIcon size={16} />
-            <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
-          </div>
-        )}
-        <label className={styles.search}>
-          <Search size={18} aria-hidden='true' />
-          <input
-            ref={searchRef}
-            type='search'
-            aria-label='Search notes'
-            placeholder='Search'
-            value={searchValue}
-            onChange={(event) => onSearchChange(event.target.value)}
-          />
-          {shortcutHint && !searchValue && <kbd className={styles.shortcut}>{shortcutHint}</kbd>}
-        </label>
-      </div>
+      {(syncBadge || showSearch) && (
+        <div className={styles.tools}>
+          {syncStatus && SyncIcon && (
+            <div role='status' className={`${styles.syncBadge} ${SYNC_CLASSES[syncStatus] ?? ''}`}>
+              <SyncIcon size={16} />
+              <span>{SYNC_LABELS[syncStatus](unsyncedCount)}</span>
+            </div>
+          )}
+          {showSearch && (
+            <label className={styles.search}>
+              <Search size={18} aria-hidden='true' />
+              <input
+                ref={searchRef}
+                type='search'
+                aria-label='Search notes'
+                placeholder='Search'
+                value={searchValue}
+                onChange={(event) => onSearchChange(event.target.value)}
+              />
+              {shortcutHint && !searchValue && <kbd className={styles.shortcut}>{shortcutHint}</kbd>}
+            </label>
+          )}
+        </div>
+      )}
 
       <button type='button' className={styles.avatar} aria-label='Profile and settings' onClick={onOpenSettings}>
         {userPicture && !imgFailed ? (
