@@ -1,12 +1,12 @@
 import { Inbox, Plus, Settings, Trash2, type LucideIcon } from 'lucide-react';
 import { motion } from 'motion/react';
+import type { View } from '../types/view';
 import styles from './Dock.module.css';
 
 interface DockProps {
-  view: 'notes' | 'trash';
-  onViewChange: (view: 'notes' | 'trash') => void;
+  view: View;
+  onViewChange: (view: View) => void;
   onAddNote: () => void;
-  onOpenSettings: () => void;
   trashCount: number;
 }
 
@@ -35,7 +35,7 @@ function DockItem({ icon: Icon, label, active = false, onClick }: DockItemProps)
   );
 }
 
-export function Dock({ view, onViewChange, onAddNote, onOpenSettings, trashCount }: DockProps) {
+export function Dock({ view, onViewChange, onAddNote, trashCount }: DockProps) {
   return (
     <nav className={styles.dock} aria-label='Main'>
       <DockItem icon={Inbox} label='Notes' active={view === 'notes'} onClick={() => onViewChange('notes')} />
@@ -45,7 +45,12 @@ export function Dock({ view, onViewChange, onAddNote, onOpenSettings, trashCount
         active={view === 'trash'}
         onClick={() => onViewChange('trash')}
       />
-      <DockItem icon={Settings} label='Settings' onClick={onOpenSettings} />
+      <DockItem
+        icon={Settings}
+        label='Settings'
+        active={view === 'settings'}
+        onClick={() => onViewChange('settings')}
+      />
       <button type='button' className={styles.add} aria-label='New scribble' onClick={onAddNote}>
         <Plus size={22} />
       </button>
