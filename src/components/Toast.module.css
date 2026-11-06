@@ -5,7 +5,9 @@
   left: 0;
   z-index: 1000;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   padding: 0 16px;
   pointer-events: none;
 }
@@ -20,4 +22,51 @@
   font-size: 13.5px;
   line-height: 1.4;
   text-align: center;
+}
+
+.interactive {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 8px 18px;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.message {
+  flex: 1;
+  min-width: 0;
+}
+
+.action {
+  min-height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-card-action-bg);
+  color: var(--color-card-action-color);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.action:focus-visible,
+.dismiss:focus-visible {
+  outline: 2px solid var(--color-text-primary);
+  outline-offset: 2px;
 }
