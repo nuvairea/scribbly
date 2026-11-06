@@ -4,9 +4,9 @@ import App from './App';
 import './index.css';
 import { NotesProvider } from './context/NotesContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { registerSW } from 'virtual:pwa-register';
+import { initAppUpdates } from './lib/appUpdate';
 
-registerSW({ immediate: true });
+initAppUpdates();
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
