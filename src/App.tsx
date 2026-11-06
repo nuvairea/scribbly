@@ -17,6 +17,7 @@ import { SettingsView } from './components/SettingsView';
 import type { Note } from './types/note';
 import type { View } from './types/view';
 import { isOffline } from './lib/api';
+import { onUpdateAvailable, reloadToUpdate } from './lib/appUpdate';
 
 type AuthState = 'loading' | 'auth' | 'notes';
 
@@ -47,7 +48,19 @@ function AppContent() {
   const [authState, setAuthState] = useState<AuthState>('loading');
   const [user, setUser] = useState<User | null>(null);
   const { hasUnsyncedNotes, setAuthContext } = useNotes();
-  const { showToast } = useToast();
+  const { showToast, showActionToast } = useToast();
+
+  useEffect(() => {
+    if (!import.meta.env.PROD) return;
+    return onUpdateAvailable(() =>
+      showActionToast({
+        key: 'app-update',
+        message: 'New version available',
+        actionLabel: 'Reload',
+        onAction: reloadToUpdate,
+      }),
+    );
+  }, [showActionToast]);
 
   useEffect(() => {
     if (!import.meta.env.PROD) return;
