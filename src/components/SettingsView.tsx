@@ -1,14 +1,29 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
-import { Download, Trash, Mail, LogOut, UserX } from 'lucide-react';
+import { Download, Trash, Mail, LogOut, LogIn, UserX, Moon, Tag, RefreshCw, ExternalLink, FileText, ShieldCheck } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
 import { useToast } from '../hooks/useToast';
+import { checkForUpdate } from '../lib/appUpdate';
 import styles from './SettingsView.module.css';
 
 type Theme = 'system' | 'light' | 'dark';
 
 const THEME_KEY = 'scribbly_theme';
-const APP_VERSION = 'Scribbly v3.3.0';
+const RELEASE_URL = `https://github.com/nuvairea/scribbly/releases/tag/v${__APP_VERSION__}`;
+
+type UpdateStatus = 'idle' | 'checking' | 'latest' | 'available' | 'error';
+
+const UPDATE_HINTS: Record<UpdateStatus, string> = {
+  idle: 'See if a newer version is out',
+  checking: 'Checking...',
+  latest: "You're on the latest version",
+  available: 'New version available',
+  error: "Couldn't check, try again",
+};
+const THEME_OPTIONS: { value: Theme; label: string }[] = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
+];
 
 function applyTheme(theme: Theme) {
   if (theme === 'system') {
@@ -16,6 +31,18 @@ function applyTheme(theme: Theme) {
   } else {
     document.documentElement.setAttribute('data-theme', theme);
   }
+}
+
+function MiniScreen({ tone, clipped = false }: { tone: 'light' | 'dark'; clipped?: boolean }) {
+  return (
+    <span className={`${styles.mini} ${clipped ? styles.miniClipped : ''}`} data-tone={tone} aria-hidden='true'>
+      <span className={styles.miniCard}>
+        <span className={styles.miniLine} />
+        <span className={`${styles.miniLine} ${styles.miniLineShort}`} />
+        <span className={styles.miniDot} />
+      </span>
+    </span>
+  );
 }
 
 interface SettingsViewProps {
@@ -29,9 +56,13 @@ interface SettingsViewProps {
 export function SettingsView({ isGuest, userEmail, onLogout, onDeleteAccount, onLoginPrompt }: SettingsViewProps) {
   const { notes, emptyTrash } = useNotes();
   const { showToast } = useToast();
+  const [confirmingTrash, setConfirmingTrash] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [confirmText, setConfirmText] = useState('');
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus>('idle');
   const canDelete = confirmText.trim() === 'DELETE';
+  const trashedCount = notes.filter((note) => note.deleted).length;
+  const trashedLabel = `${trashedCount} ${trashedCount === 1 ? 'note' : 'notes'}`;
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem(THEME_KEY);
     return saved === 'light' || saved === 'dark' ? saved : 'system';
@@ -72,70 +103,139 @@ export function SettingsView({ isGuest, userEmail, onLogout, onDeleteAccount, on
   };
 
   const handleClearTrash = () => {
-    if (!notes.some((note) => note.deleted)) {
+    if (trashedCount === 0) {
       showToast('Trash is already empty');
       return;
     }
+    setConfirmingTrash(true);
+  };
+
+  const handleCheckUpdate = async () => {
+    if (updateStatus === 'checking') return;
+    setUpdateStatus('checking');
+    setUpdateStatus(await checkForUpdate());
+  };
+
+  const handleConfirmClearTrash = () => {
     emptyTrash();
+    setConfirmingTrash(false);
     showToast('Trash emptied');
   };
 
   return (
     <section className={styles.view} aria-label='Settings'>
-      <p className={styles.sectionLabel}>Appearance</p>
-      <div className={styles.row}>
-        <span className={styles.rowLabel}>Theme</span>
-        <div className={styles.themeToggle}>
-          {(['system', 'light', 'dark'] as Theme[]).map((option) => (
-            <button key={option} type='button' className={`${styles.themeOption} ${theme === option ? styles.themeOptionActive : ''}`} onClick={() => setTheme(option)}>
-              {theme === option && <motion.span layoutId='theme-pill' className={styles.themePill} transition={{ type: 'spring', duration: 0.22, bounce: 0 }} />}
-              <span className={styles.themeLabel}>{option === 'system' ? 'System' : option === 'light' ? 'Light' : 'Dark'}</span>
+      <div className={styles.group}>
+        <div className={styles.themeHead}>
+          <Moon size={18} className={styles.rowIcon} />
+          <span className={styles.rowLabel}>Theme</span>
+        </div>
+        <div className={styles.tiles}>
+          {THEME_OPTIONS.map(({ value, label }) => (
+            <button key={value} type='button' className={`${styles.tile} ${theme === value ? styles.tileActive : ''}`} aria-pressed={theme === value} onClick={() => setTheme(value)}>
+              <span className={styles.preview}>
+                {value === 'system' ? (
+                  <>
+                    <MiniScreen tone='dark' />
+                    <MiniScreen tone='light' clipped />
+                  </>
+                ) : (
+                  <MiniScreen tone={value} />
+                )}
+              </span>
+              <span className={styles.tileLabel}>{label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <p className={styles.sectionLabel}>Data</p>
-      <div className={styles.row}>
-        <div>
-          <p className={styles.rowLabel}>Export notes</p>
-          <p className={styles.rowHint}>Download all your notes as a JSON file</p>
-        </div>
-        <button type='button' className={styles.actionButton} onClick={handleExport}>
-          <Download size={14} />
-          Export
+      <div className={styles.group}>
+        <button type='button' className={styles.row} onClick={handleExport}>
+          <Download size={18} className={styles.rowIcon} />
+          <span className={styles.rowText}>
+            <span className={styles.rowLabel}>Export notes</span>
+            <span className={styles.rowHint}>Download all your notes as a JSON file</span>
+          </span>
         </button>
-      </div>
-      <div className={styles.row}>
-        <div>
-          <p className={styles.rowLabel}>Clear trash</p>
-          <p className={styles.rowHint}>Permanently delete everything in trash</p>
-        </div>
-        <button type='button' className={styles.actionButton} onClick={handleClearTrash}>
-          <Trash size={14} />
-          Clear
+        <button type='button' className={`${styles.row} ${trashedCount === 0 ? styles.rowMuted : ''}`} onClick={handleClearTrash}>
+          <Trash size={18} className={styles.rowIcon} />
+          <span className={styles.rowText}>
+            <span className={styles.rowLabel}>Clear trash</span>
+            <span className={styles.rowHint}>{trashedCount === 0 ? 'Trash is empty' : `Permanently delete ${trashedLabel} in trash`}</span>
+          </span>
         </button>
+        {confirmingTrash && trashedCount > 0 && (
+          <div className={styles.trashConfirm}>
+            <p className={styles.confirmText}>Delete {trashedLabel} forever? This can't be undone.</p>
+            <div className={styles.confirmActions}>
+              <button type='button' className={styles.actionButton} onClick={() => setConfirmingTrash(false)}>
+                Cancel
+              </button>
+              <button type='button' className={`${styles.actionButton} ${styles.dangerButton}`} onClick={handleConfirmClearTrash}>
+                {trashedCount === 1 ? 'Delete note' : 'Delete notes'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      <p className={styles.sectionLabel}>Account</p>
+      <div className={styles.group}>
+        <a className={styles.row} href={RELEASE_URL} target='_blank' rel='noopener noreferrer'>
+          <Tag size={18} className={styles.rowIcon} />
+          <span className={styles.rowText}>
+            <span className={styles.rowLabel}>Version</span>
+            <span className={styles.rowHint}>Scribbly v{__APP_VERSION__}</span>
+          </span>
+          <ExternalLink size={16} className={styles.trailingIcon} aria-hidden='true' />
+        </a>
+        <button type='button' className={styles.row} onClick={handleCheckUpdate} aria-busy={updateStatus === 'checking'}>
+          <RefreshCw size={18} className={`${styles.rowIcon} ${updateStatus === 'checking' ? styles.spin : ''}`} />
+          <span className={styles.rowText}>
+            <span className={styles.rowLabel}>Check for updates</span>
+            <span className={styles.rowHint} aria-live='polite'>
+              {UPDATE_HINTS[updateStatus]}
+            </span>
+          </span>
+        </button>
+        <a className={styles.row} href='/terms.html' target='_blank' rel='noopener noreferrer'>
+          <FileText size={18} className={styles.rowIcon} />
+          <span className={styles.rowLabel}>Terms</span>
+          <ExternalLink size={16} className={styles.trailingIcon} aria-hidden='true' />
+        </a>
+        <a className={styles.row} href='/privacy.html' target='_blank' rel='noopener noreferrer'>
+          <ShieldCheck size={18} className={styles.rowIcon} />
+          <span className={styles.rowLabel}>Privacy policy</span>
+          <ExternalLink size={16} className={styles.trailingIcon} aria-hidden='true' />
+        </a>
+      </div>
+
       {isGuest ? (
-        <div className={styles.guestPrompt}>
-          <div className={styles.guestPromptText}>
-            <p className={styles.rowLabel}>You're using Scribbly as a guest</p>
-            <p className={styles.rowHint}>Sign-in with Google to sync notes and manage your account</p>
-          </div>
-          <button type='button' className={styles.actionButton} onClick={onLoginPrompt}>
-            Sign in
+        <div className={styles.group}>
+          <button type='button' className={styles.row} onClick={onLoginPrompt}>
+            <LogIn size={18} className={styles.rowIcon} />
+            <span className={styles.rowText}>
+              <span className={styles.rowLabel}>Sign in</span>
+              <span className={styles.rowHint}>You're using Scribbly as a guest. Sign in with Google to sync notes and manage your account</span>
+            </span>
           </button>
         </div>
       ) : (
         <>
-          {userEmail && (
-            <div className={styles.emailRow}>
-              <Mail size={14} />
-              <span>Signed in as {userEmail}</span>
-            </div>
-          )}
+          <div className={styles.group}>
+            {userEmail && (
+              <div className={styles.row}>
+                <Mail size={18} className={styles.rowIcon} />
+                <span className={styles.rowText}>
+                  <span className={styles.rowHint}>Signed in as</span>
+                  <span className={`${styles.rowLabel} ${styles.rowEmail}`}>{userEmail}</span>
+                </span>
+              </div>
+            )}
+            <button type='button' className={styles.row} onClick={onLogout}>
+              <LogOut size={18} className={styles.rowIcon} />
+              <span className={styles.rowLabel}>Log out</span>
+            </button>
+          </div>
+
           {confirmingDelete ? (
             <div className={styles.confirmBox}>
               <p className={styles.confirmText}>
@@ -153,32 +253,16 @@ export function SettingsView({ isGuest, userEmail, onLogout, onDeleteAccount, on
               </div>
             </div>
           ) : (
-            <div className={styles.accountActions}>
-              <button type='button' className={styles.actionButton} onClick={onLogout}>
-                <LogOut size={14} />
-                Log out
-              </button>
-              <button type='button' className={`${styles.actionButton} ${styles.dangerButton}`} onClick={() => setConfirmingDelete(true)}>
-                <UserX size={14} />
-                Delete account
-              </button>
-            </div>
+            <button type='button' className={styles.deletePill} onClick={() => setConfirmingDelete(true)}>
+              <UserX size={20} className={styles.rowIcon} />
+              <span className={styles.rowText}>
+                <span className={styles.deleteTitle}>Delete account</span>
+                <span className={styles.deleteHint}>Removes your account and all notes</span>
+              </span>
+            </button>
           )}
         </>
       )}
-
-      <div className={styles.footer}>
-        <p className={styles.legal}>
-          <a href='/terms.html' target='_blank' rel='noopener noreferrer'>
-            Terms
-          </a>
-          <span aria-hidden='true'>·</span>
-          <a href='/privacy.html' target='_blank' rel='noopener noreferrer'>
-            Privacy Policy
-          </a>
-        </p>
-        <p className={styles.version}>{APP_VERSION}</p>
-      </div>
     </section>
   );
 }
