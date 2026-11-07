@@ -183,7 +183,7 @@ export function SettingsView({ isGuest, userEmail, onLogout, onDeleteAccount, on
           <Tag size={18} className={styles.rowIcon} />
           <span className={styles.rowText}>
             <span className={styles.rowLabel}>Version</span>
-            <span className={styles.rowHint}>Scribbly v{__APP_VERSION__}</span>
+            <span className={styles.rowHint}>v{__APP_VERSION__}</span>
           </span>
           <ExternalLink size={16} className={styles.trailingIcon} aria-hidden='true' />
         </a>
