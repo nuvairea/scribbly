@@ -9,6 +9,7 @@ export interface Note {
   timestamp: number;
   deleted: boolean;
   deletedAt: number | null;
+  updatedAt?: string;
   pendingSync: boolean;
   pendingOp: PendingOp | null;
   syncAttempts: number;

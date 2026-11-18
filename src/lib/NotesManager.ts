@@ -152,7 +152,9 @@ export class NotesManager {
   }
 
   private async sendNote(note: Note, op: PendingOp) {
-    const trashRequest = () => request<{ note: Note }>(`/notes/${note.id}`, {
+    type NoteReply = { note: Note; conflict?: Note };
+
+    const trashRequest = () => request<NoteReply>(`/notes/${note.id}`, {
       method: 'PATCH',
       body: JSON.stringify({ deleted: note.deleted, deletedAt: note.deletedAt }),
     });
@@ -162,20 +164,24 @@ export class NotesManager {
     }
 
     if (op === 'create') {
-      return request<{ note: Note }>('/notes', {
+      return request<NoteReply>('/notes', {
         method: 'POST',
         body: JSON.stringify(this.toPayload(note)),
       });
     }
 
-    const updated = await request<{ note: Note }>(`/notes/${note.id}`, {
+    const updated = await request<NoteReply>(`/notes/${note.id}`, {
       method: 'PUT',
       body: JSON.stringify(this.toPayload(note)),
     });
 
-    // edited and trashed/restored before syncing: content goes first, then the delete state
     if (op === 'update_trash' && updated.ok) {
-      return trashRequest();
+      const trashed = await trashRequest();
+      if (trashed.ok && updated.data.conflict) {
+        // the trash reply is the one kept, so carry the conflict copy over to it
+        return { ...trashed, data: { ...trashed.data, conflict: updated.data.conflict } };
+      }
+      return trashed;
     }
 
     return updated;
@@ -239,12 +245,18 @@ export class NotesManager {
     if (!editedMeanwhile) {
       this.replaceNote(serverNote);
     } else if (current.pendingSync) {
-      // the server has the note now, so a pending 'create' has to become an 'update'
-      const next: Note = current.pendingOp === 'create'
-        ? { ...current, pendingOp: 'update' }
-        : current;
+      const next: Note = {
+        ...current,
+        updatedAt: serverNote.updatedAt,
+        pendingOp: current.pendingOp === 'create' ? 'update' : current.pendingOp,
+      };
       this.replaceNote(next);
       resend = next;
+    }
+
+    if (result.data.conflict) {
+      const conflictCopy = this.normalizeNote(result.data.conflict);
+      this.notes = [conflictCopy, ...this.notes.filter((entry) => entry.id !== conflictCopy.id)];
     }
 
     this.save();

@@ -16,6 +16,7 @@ interface ServerNote {
   timestamp: number;
   deleted: boolean;
   deletedAt: number | null;
+  updatedAt?: string;
 }
 
 interface FailPlan {
@@ -78,6 +79,8 @@ function makeEnv() {
 
   const notes = new Map<string, ServerNote>();
   const holds: Hold[] = [];
+  let clock = 1_700_000_000_000;
+  const stamp = () => new Date((clock += 1000)).toISOString();
   const server = {
     notes,
     errors: 0,
@@ -138,6 +141,7 @@ function makeEnv() {
         timestamp: typeof body.timestamp === 'number' ? body.timestamp : Date.now(),
         deleted: Boolean(body.deleted),
         deletedAt: typeof body.deletedAt === 'number' ? body.deletedAt : null,
+        updatedAt: stamp(),
       };
       notes.set(noteId, created);
       return { status: 201, json: { note: { ...created } } };
@@ -147,9 +151,23 @@ function makeEnv() {
 
     if (method === 'PUT') {
       if (!existing) return { status: 404, json: { error: 'not found' } };
+      // same rule as the real server: a stale edit is kept as a separate conflict copy
+      const base = typeof body.updatedAt === 'string' ? body.updatedAt : null;
+      if (base && existing.updatedAt && existing.updatedAt > base) {
+        const copy: ServerNote = {
+          ...existing,
+          id: `copy-${notes.size}`,
+          title: `${String(body.title ?? 'Untitled')} (conflict copy)`,
+          body: String(body.body ?? ''),
+          updatedAt: stamp(),
+        };
+        notes.set(copy.id, copy);
+        return { status: 200, json: { note: { ...existing }, conflict: { ...copy } } };
+      }
       for (const field of EDITABLE_FIELDS) {
         if (body[field] !== undefined) Object.assign(existing, { [field]: body[field] });
       }
+      existing.updatedAt = stamp();
       return { status: 200, json: { note: { ...existing } } };
     }
 
@@ -159,6 +177,7 @@ function makeEnv() {
       existing.deletedAt = existing.deleted
         ? typeof body.deletedAt === 'number' ? body.deletedAt : Date.now()
         : null;
+      existing.updatedAt = stamp();
       return { status: 200, json: { note: { ...existing } } };
     }
 
@@ -577,6 +596,56 @@ describe('refreshing when you switch back to the app', () => {
     await settle();
 
     expect(find(manager, 'a')?.body).toBe('fresh edit');
+  });
+});
+
+describe('editing the same note on two devices', () => {
+  it('keeps the late edit as a conflict copy instead of overwriting the newer one', async () => {
+    const { manager, server } = boot({ serverNotes: [serverNote('a', 'v1', { updatedAt: '2026-11-01T10:00:00.000Z' })] });
+    await manager.setAuthContext(true, 'u1');
+
+    // another device saves while this one is still working from the old version
+    const remote = server.notes.get('a');
+    if (remote) Object.assign(remote, { body: 'phone edit', updatedAt: '2026-11-03T10:00:00.000Z' });
+
+    await manager.updateNote('a', 't', 'laptop edit', 'sun');
+    await settle();
+
+    expect(server.notes.get('a')?.body).toBe('phone edit');
+    expect(find(manager, 'a')?.body).toBe('phone edit');
+    const copy = manager.notes.find((note) => note.title.endsWith('(conflict copy)'));
+    expect(copy?.body).toBe('laptop edit');
+    expect(copy?.pendingSync).toBe(false);
+  });
+
+  it('does not invent conflicts when one device edits the same note twice in a row', async () => {
+    const { manager, server } = boot({ serverNotes: [serverNote('a', 'v1', { updatedAt: '2026-11-01T10:00:00.000Z' })] });
+    await manager.setAuthContext(true, 'u1');
+
+    await manager.updateNote('a', 't', 'edit 1', 'sun');
+    await settle();
+    await manager.updateNote('a', 't', 'edit 2', 'sun');
+    await settle();
+
+    expect(server.notes.get('a')?.body).toBe('edit 2');
+    expect(manager.notes).toHaveLength(1);
+    expect(server.notes.size).toBe(1);
+  });
+
+  it('does not invent a conflict when an edit lands while the previous one is in flight', async () => {
+    const { manager, server } = boot({ serverNotes: [serverNote('a', 'v1', { updatedAt: '2026-11-01T10:00:00.000Z' })] });
+    await manager.setAuthContext(true, 'u1');
+
+    const hold = server.hold('PUT');
+    await manager.updateNote('a', 't', 'edit 1', 'sun');
+    await hold.arrived;
+    await manager.updateNote('a', 't', 'edit 2', 'sun');
+    hold.release();
+    await settle();
+
+    expect(server.notes.get('a')?.body).toBe('edit 2');
+    expect(server.notes.size).toBe(1);
+    expect(find(manager, 'a')?.pendingSync).toBe(false);
   });
 });
 
